@@ -4,11 +4,13 @@ import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import com.skillstorm.cpa.dtos.ClientDTO;
 import com.skillstorm.cpa.models.Client;
 import com.skillstorm.cpa.repositories.ClientRepository;
 
+@Service
 public class ClientService {
 	private ClientRepository repo;
 	
@@ -47,7 +49,7 @@ public class ClientService {
 	public ResponseEntity<Client> createOne(ClientDTO dto) { 
 		try {
 			return ResponseEntity.status(HttpStatus.CREATED)
-								 .body(repo.save(new Client(0, dto.firstName(), dto.lastName(), dto.email(), dto.address())));
+								 .body(repo.save(new Client(0, dto.firstName(), dto.lastName(), dto.email(), dto.address(), dto.taxReturns())));
 		} catch (Exception e) {
 			return ResponseEntity.status(500).body(null);
 		}
@@ -58,7 +60,7 @@ public class ClientService {
 	public ResponseEntity<Client> updateOne(int id, ClientDTO dto) {
 		if (repo.existsById(id))
 			return ResponseEntity.status(HttpStatus.OK)
-					 			 .body(repo.save(new Client(id, dto.firstName(), dto.lastName(), dto.email(), dto.address())));
+					 			 .body(repo.save(new Client(id, dto.firstName(), dto.lastName(), dto.email(), dto.address(), dto.taxReturns())));
 		else
 			return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
 	}

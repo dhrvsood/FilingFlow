@@ -1,7 +1,7 @@
 CREATE SCHEMA `cpa`;
 
 -- CLIENT TABLE
-CREATE TABLE `client` (
+CREATE TABLE cpa.`client` (
     client_id INT PRIMARY KEY AUTO_INCREMENT,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
@@ -11,13 +11,13 @@ CREATE TABLE `client` (
 );
 
 -- SECTOR TABLE
-CREATE TABLE `sector` (
+CREATE TABLE cpa.`sector` (
     sector_id INT PRIMARY KEY AUTO_INCREMENT,
     sector_name VARCHAR(100) UNIQUE NOT NULL
 );
 
 -- TAX RETURN TABLE
-CREATE TABLE `tax_return` (
+CREATE TABLE cpa.`tax_return` (
     tax_return_id INT PRIMARY KEY AUTO_INCREMENT,
     client_id INT NOT NULL,
     spouse_id INT DEFAULT NULL,  -- Spouse reference only if filing jointly
@@ -34,7 +34,7 @@ CREATE TABLE `tax_return` (
 );
 
 -- CAPACITY TABLE
-CREATE TABLE `capacity` (
+CREATE TABLE cpa.`capacity` (
     capacity_id INT PRIMARY KEY AUTO_INCREMENT,
     year INT NOT NULL,
     max_num_returns INT NOT NULL,
@@ -43,54 +43,59 @@ CREATE TABLE `capacity` (
 
 INSERT INTO capacity (year, max_num_returns) VALUES (2024, 150);
 
--- INSERT INTO client (first_name, last_name, email, address) VALUES
--- ('John', 'Doe', 'john.doe@example.com', '123 Elm St, Springfield, IL'),
--- ('Jane', 'Doe', 'jane.doe@example.com', '123 Elm St, Springfield, IL'),
--- ('Mike', 'Smith', 'mike.smith@example.com', '456 Oak St, Springfield, IL'),
--- ('Samantha', 'Johnson', 'sam.johnson@example.com', '789 Pine St, Springfield, IL');
+INSERT INTO cpa.client (first_name, last_name, email, address)
+VALUES
+('John', 'Doe', 'john.doe@example.com', '123 Main St, City A'),
+('Jane', 'Doe', 'jane.doe@example.com', '123 Main St, City A'),
+('Mike', 'Smith', 'mike.smith@example.com', '456 Oak St, City B'),
+('Emily', 'Smith', 'emily.smith@example.com', '456 Oak St, City B'),
+('Tom', 'Brown', 'tom.brown@example.com', '789 Pine St, City C'),
+('Sarah', 'Brown', 'sarah.brown@example.com', '789 Pine St, City C'),
+('Chris', 'Johnson', 'chris.johnson@example.com', '101 Maple St, City D'),
+('Alex', 'Jones', 'alex.jones@example.com', '102 Maple St, City D'),
+('Taylor', 'Davis', 'taylor.davis@example.com', '103 Maple St, City D'),
+('Morgan', 'Lee', 'morgan.lee@example.com', '104 Maple St, City E'),
+('Jordan', 'White', 'jordan.white@example.com', '105 Maple St, City F'),
+('Jamie', 'Black', 'jamie.black@example.com', '106 Maple St, City F'),
+('Sam', 'Green', 'sam.green@example.com', '107 Maple St, City G'),
+('Kelly', 'Blue', 'kelly.blue@example.com', '108 Maple St, City H'),
+('Pat', 'Yellow', 'pat.yellow@example.com', '109 Maple St, City I');
 
--- Select * from client;
+INSERT INTO cpa.sector (sector_name)
+VALUES
+('Technology'),
+('Healthcare'),
+('Retail'),
+('Finance'),
+('Military');
 
--- INSERT INTO Sector (sector_name) VALUES
--- ('Retail'),
--- ('Technology'),
--- ('Healthcare'),
--- ('Finance');
+-- Single clients
+INSERT INTO cpa.tax_return (client_id, spouse_id, sector_id, tax_year, filing_status, tax_liability, tax_paid)
+VALUES
+(1, NULL, 1, 2022, 'single', 5000.00, 4800.00),
+(3, NULL, 3, 2023, 'single', 3500.00, 3400.00),
+(5, NULL, 4, 2024, 'single', 4200.00, 4100.00),
+(8, NULL, 5, 2022, 'single', 6000.00, 6000.00),
+(9, NULL, 2, 2023, 'single', 3000.00, 2900.00);
 
--- select * from sector;
+-- Married clients filing jointly
+INSERT INTO cpa.tax_return (client_id, spouse_id, sector_id, tax_year, filing_status, tax_liability, tax_paid)
+VALUES
+(1, 2, 1, 2023, 'married_joint', 9000.00, 8900.00),
+(3, 4, 3, 2024, 'married_joint', 7500.00, 7400.00),
+(5, 6, 4, 2022, 'married_joint', 12000.00, 11900.00);
 
--- -- Joint filing (John and Jane Doe)
--- INSERT INTO tax_return (client_id, spouse_id, sector_id, tax_year, filing_status, taxLiability, taxPaid) VALUES
--- (1, 2, 1, 2024, 'married_joint', 30000.00, 25000.00);
+-- Married clients filing separately
+INSERT INTO cpa.tax_return (client_id, spouse_id, sector_id, tax_year, filing_status, tax_liability, tax_paid)
+VALUES
+(7, 8, 5, 2024, 'married_separate', 4500.00, 4400.00),
+(8, 7, 5, 2024, 'married_separate', 4600.00, 4500.00),
+(9, 10, 2, 2022, 'married_separate', 2800.00, 2700.00),
+(10, 9, 2, 2022, 'married_separate', 2900.00, 2800.00);
 
--- -- Separate filings (Mike Smith and Samantha Johnson)
--- INSERT INTO tax_return (client_id, spouse_id, sector_id, tax_year, filing_status, taxLiability, taxPaid) VALUES
--- (3, NULL, 2, 2024, 'married_separate', 15000.00, 14000.00),
--- (4, NULL, 3, 2024, 'married_separate', 18000.00, 16000.00);
-
--- -- Single filing (John Doe filing separately for a different year, before marriage)
--- INSERT INTO tax_return (client_id, spouse_id, sector_id, tax_year, filing_status, taxLiability, taxPaid) VALUES
--- (1, NULL, 4, 2023, 'single', 10000.00, 9000.00);
-
--- select * from tax_return where filing_status = 'single';
-
--- SELECT 
---     c.first_name AS client_first_name,
---     c.last_name AS client_last_name,
---     s.first_name AS spouse_first_name,
---     s.last_name AS spouse_last_name,
---     sec.sector_name,
---     tr.tax_year,
---     tr.filing_status,
---     tr.taxLiability,
---     tr.taxPaid
--- FROM 
---     tax_return tr
--- JOIN 
---     Client c ON tr.client_id = c.client_id
--- LEFT JOIN 
---     Client s ON tr.spouse_id = s.client_id  -- Left join to handle cases where spouse_id is NULL
--- JOIN 
---     Sector sec ON tr.sector_id = sec.sector_id;
-
-
+-- Business clients
+INSERT INTO cpa.tax_return (client_id, spouse_id, sector_id, tax_year, filing_status, tax_liability, tax_paid)
+VALUES
+(11, NULL, 3, 2022, 'business', 10000.00, 9800.00),
+(12, NULL, 4, 2023, 'business', 8000.00, 7800.00),
+(13, NULL, 5, 2024, 'business', 9500.00, 9300.00);
