@@ -2,17 +2,25 @@ package com.skillstorm.cpa.services;
 
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.skillstorm.cpa.dtos.ClientDTO;
 import com.skillstorm.cpa.models.Client;
+import com.skillstorm.cpa.models.TaxReturn;
+import com.skillstorm.cpa.models.TaxReturn.FilingStatus;
 import com.skillstorm.cpa.repositories.ClientRepository;
+import com.skillstorm.cpa.repositories.TaxReturnRepository;
 
 @Service
 public class ClientService {
+	@Autowired
 	private ClientRepository repo;
+	
+	@Autowired
+	private TaxReturnRepository taxReturnRepo;
 	
 	public ClientService(ClientRepository repo) {
 		this.repo = repo;
@@ -28,6 +36,21 @@ public class ClientService {
 			clients = repo.findAllByFirstName(firstName);
 		}
 		
+		// Iterate through all clients 
+		for (Client client : clients) {
+			for (TaxReturn taxReturn : client.getTaxReturns()) {
+				// Check if filing status if married_joint and there is a spouse
+				if (taxReturn.getFilingStatus() == FilingStatus.married_joint && taxReturn.getSpouse() != null) {
+					Client spouse = taxReturn.getSpouse();
+					
+					// Ensure spouse's taxReturns list contains the same tax return
+					if (!spouse.getTaxReturns().contains(taxReturn)) {
+						spouse.getTaxReturns().add(taxReturn);
+					}
+				}
+			}
+		}
+		
 		if (!clients.iterator().hasNext())
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(clients);
 		else
@@ -39,10 +62,21 @@ public class ClientService {
 	public ResponseEntity<Client> findById(int id) {
 		Optional<Client> client = repo.findById(id);
 		
-		if (client.isEmpty())
+		if (client.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-		else
-			return ResponseEntity.status(HttpStatus.OK).body(client.get());
+		} else {
+			Client foundClient = client.get();			
+			Iterable<TaxReturn> spouseTaxReturns = taxReturnRepo.findAllBySpouseID(id);
+			
+			for (TaxReturn taxReturn : spouseTaxReturns) {
+				// only add it back in if the spouse is married_joint
+				if (taxReturn.getFilingStatus() == FilingStatus.married_joint && !foundClient.getTaxReturns().contains(taxReturn)) {
+					foundClient.getTaxReturns().add(taxReturn);
+				}
+			}
+			
+			return ResponseEntity.status(HttpStatus.OK).body(foundClient);
+		}
 	}
 	
 	// create one 
