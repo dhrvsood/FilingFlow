@@ -29,7 +29,7 @@ export const TaxReturns = () => {
     }, []);  // Empty dependency array to run only once on mount
 
     return (
-        <div>
+        <div className="container mt-4">
             <h2>Tax Returns</h2>
             <p>Here you can view and manage your tax returns.</p>
             

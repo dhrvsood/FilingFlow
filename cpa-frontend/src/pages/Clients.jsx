@@ -1,4 +1,3 @@
-// ------------------------------------------------------------------------------------------
 import React, { useEffect, useState } from 'react';
 import { Card, Container, Row, Col, Button, Modal, Form, Spinner } from 'react-bootstrap';
 import axios from 'axios';

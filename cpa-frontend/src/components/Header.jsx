@@ -3,7 +3,7 @@ import { NavBar } from "./NavBar"
 export const Header = () => {
     return (
         <header>
-            <h1>FilingFlow</h1>
+            {/* <h1>FilingFlow</h1> */}
             <NavBar />
         </header>
     )
