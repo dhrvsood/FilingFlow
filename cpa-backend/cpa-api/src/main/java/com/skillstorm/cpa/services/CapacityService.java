@@ -62,7 +62,6 @@ public class CapacityService {
 		} catch (Exception e) {
 			return ResponseEntity.status(500).body(null);
 		}
-		
 	}
 	
 	// update one

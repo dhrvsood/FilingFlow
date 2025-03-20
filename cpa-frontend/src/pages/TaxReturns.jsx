@@ -36,7 +36,7 @@ export const TaxReturns = () => {
             {/* Display tax returns in a table */}
             <div>
                 {taxReturns.length > 0 ? (
-                    <Table striped bordered hover variant='dark'>
+                    <Table striped bordered hover>
                         <thead>
                             <tr>
                                 <th></th>
