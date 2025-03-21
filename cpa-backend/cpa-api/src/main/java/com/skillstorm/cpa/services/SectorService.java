@@ -1,5 +1,7 @@
 package com.skillstorm.cpa.services;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.skillstorm.cpa.dtos.SectorDTO;
 import com.skillstorm.cpa.models.Sector;
+import com.skillstorm.cpa.models.TaxReturn;
 import com.skillstorm.cpa.repositories.SectorRepository;
 
 @Service
@@ -47,9 +50,10 @@ public class SectorService {
 	
 	// create one 
 	public ResponseEntity<Sector> createOne(SectorDTO dto) { 
+		List<TaxReturn> trs = new LinkedList<>();
 		try {
 			return ResponseEntity.status(HttpStatus.CREATED)
-								 .body(repo.save(new Sector(0, dto.sectorName(), dto.taxReturns())));
+								 .body(repo.save(new Sector(0, dto.sectorName(), trs)));
 		} catch (Exception e) {
 			return ResponseEntity.status(500).body(null);
 		}

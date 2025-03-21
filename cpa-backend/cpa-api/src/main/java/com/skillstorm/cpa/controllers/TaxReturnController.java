@@ -1,5 +1,8 @@
 package com.skillstorm.cpa.controllers;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,8 +41,11 @@ public class TaxReturnController {
 	
 	// get count by year
 	@GetMapping("/count/{year}")
-	public int countByTaxYear(@PathVariable int year) {
-		return service.countByTaxYear(year);
+	public Map<String, Integer> countByTaxYear(@PathVariable int year) {
+		int count = service.countByTaxYear(year);
+	    Map<String, Integer> response = new HashMap<>();
+	    response.put("count", count);
+	    return response;
 	}
 	
 	// create one

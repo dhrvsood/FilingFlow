@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Row, Col, Alert } from 'react-bootstrap';
 import axios from 'axios';
 
-export const AddTaxReturnModal = ({ show, handleClose, onTaxReturnAdded }) => {
+export const EditTaxReturnModal = ({ show, handleClose, selectedTaxReturn }) => {
+  const taxReturnId = selectedTaxReturn?.id || '';
+
   const [taxYears, setTaxYears] = useState([]);
   const [clients, setClients] = useState([]);
   const [sectors, setSectors] = useState([]);
@@ -31,7 +33,27 @@ export const AddTaxReturnModal = ({ show, handleClose, onTaxReturnAdded }) => {
             setSectors(response.data);
         }).catch(err => console.error(err));
     }
-}, [show]); // Adding the `show` dependency here
+    }, [show]); // Adding the `show` dependency here
+
+    // Update form fields when selectedTaxReturn changes
+    useEffect(() => {
+        if (selectedTaxReturn) {
+        setTaxYear(selectedTaxReturn?.taxYear || '');
+        setFilingStatus(selectedTaxReturn?.filingStatus || '');
+ // Fetch clients for the selected tax year
+        setPrimaryClientId(selectedTaxReturn?.client.id || '');
+        fetchClientsForYear(selectedTaxReturn?.taxYear, selectedTaxReturn?.client.id);
+        // getClientById(primaryClientId);
+        setSpouseClientId(selectedTaxReturn?.spouse?.id || '');
+        setSectorId(selectedTaxReturn?.sector.id || '');
+        // setSpouseSectorId(selectedTaxReturn?.spouseSectorId || '');
+        setTaxLiabilityPrimary(selectedTaxReturn?.taxLiability || '');
+        setTaxPaidPrimary(selectedTaxReturn?.taxPaid || '');
+        setTaxLiabilitySpouse(selectedTaxReturn?.taxLiabilitySpouse || '');
+        setTaxPaidSpouse(selectedTaxReturn?.taxPaidSpouse || '');
+        }
+    }, [selectedTaxReturn]);
+
 
     const handleTaxYearChange = (selectedYear) => {
         // Update the taxYear state
@@ -41,15 +63,23 @@ export const AddTaxReturnModal = ({ show, handleClose, onTaxReturnAdded }) => {
         setSpouseClientId(''); // Reset spouse client when tax year changes
 
         // Fetch clients who don't have returns for the selected year
-        fetchClientsForYear(selectedYear);
+        fetchClientsForYear(selectedYear, );
       };
       
-  // Fetch clients without returns for the selected year
-  const fetchClientsForYear = async (year) => {
+  // Fetch clients without returns for the selected year INCLUDING the client you want to edit
+  const fetchClientsForYear = async (year, clientId) => {
     try {
+      // Fetch all clients apart from the current year
       const response = await fetch(`/client/year/${year}`);
       const data = await response.json();
-      setClients(data); // Set clients to state
+
+      // Add clientId to the list of clients
+      const clientResponse = await fetch(`/client/${clientId}`);
+      const clientData = await clientResponse.json();
+
+      const updatedClients = [...data, clientData];
+      console.log(updatedClients);
+      setClients(updatedClients); // Set clients to state
     } catch (error) {
       console.error("Error fetching clients:", error);
     }
@@ -62,8 +92,12 @@ export const AddTaxReturnModal = ({ show, handleClose, onTaxReturnAdded }) => {
 
   const handleFilingStatusChange = (response) => {
     setFilingStatus(response);
-    setPrimaryClientId('');
-    setSpouseClientId('');
+    // setPrimaryClientId('');
+    // setSpouseClientId('');
+    // setTaxLiabilityPrimary('');
+    // setTaxPaidPrimary('');
+    // setTaxLiabilitySpouse('');
+    // setTaxPaidSpouse('');
   };
 
   const filteredClientsForSpouse = clients.filter(client => client.id !== primaryClientId);
@@ -87,6 +121,7 @@ export const AddTaxReturnModal = ({ show, handleClose, onTaxReturnAdded }) => {
         taxLiability: parseFloat(taxLiabilityPrimary),
         taxPaid: parseFloat(taxPaidPrimary)
     };
+    console.log(taxReturnData);
 
     // if married_separate, we have to post 2 requests
     if (filingStatus === 'married_separate') {
@@ -101,39 +136,39 @@ export const AddTaxReturnModal = ({ show, handleClose, onTaxReturnAdded }) => {
         }
 
         // primary client post request
-        axios.post('/return', taxReturnData).then(response => {
-            onTaxReturnAdded(response.data); // Call the callback function to update the parent component
-          }).catch(error => {
-            console.error('Error submitting tax return:', error);
-            setShowError(true); // Show error alert
-            setErrorMessage(error.message);
-          });
+        // axios.post('/return', taxReturnData).then(response => {
+        //     // handleClose(); // Close the modal on successful submission
+        //   }).catch(error => {
+        //     console.error('Error submitting tax return:', error);
+        //     setShowError(true); // Show error alert
+        //     setErrorMessage(error.message);
+        //   });
         
-        // spouse client post request
-        axios.post('/return', spouseTaxReturnData).then(response => {   
+        // // spouse client post request
+        // axios.post('/return', spouseTaxReturnData).then(response => {   
+        //     handleClose(); // Close the modal on successful submission
+        // }).catch(error => {
+        //     console.error('Error submitting tax return:', error);
+        //     setShowError(true); // Show error alert
+        //     setErrorMessage(error.message);
+        // });
+    }
+    else {
+        // single or married_joint post request
+        axios.put(`/return/${taxReturnId}`, taxReturnData).then(response => {
             handleClose(); // Close the modal on successful submission
-            onTaxReturnAdded(response.data); // Call the callback function to update the parent component
         }).catch(error => {
             console.error('Error submitting tax return:', error);
             setShowError(true); // Show error alert
             setErrorMessage(error.message);
         });
     }
-
-    axios.post('/return', taxReturnData).then(response => {
-      handleClose(); // Close the modal on successful submission
-      onTaxReturnAdded(response.data); // Call the callback function to update the parent component
-    }).catch(error => {
-      console.error('Error submitting tax return:', error);
-      setShowError(true); // Show error alert
-      setErrorMessage(error.message);
-    });
   };
 
   return (
     <Modal show={show} onHide={handleClose} size="lg">
       <Modal.Header closeButton>
-        <Modal.Title>Add New Tax Return</Modal.Title>
+        <Modal.Title>Edit {selectedTaxReturn?.client.id} {selectedTaxReturn?.client.firstName} {selectedTaxReturn?.client.lastName}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form>
@@ -181,10 +216,11 @@ export const AddTaxReturnModal = ({ show, handleClose, onTaxReturnAdded }) => {
           <Col md={6}>
             <Form.Group>
               <Form.Label>Primary Client</Form.Label>
+              {/* <Form.Control type="text" value={primaryClientId} /> */}
               <Form.Control as="select" value={primaryClientId} onChange={e => handlePrimaryClientChange(e.target.value)}>
-                <option value="" disabled>Select a tax year before selecting a client</option>
-                {clients.map(client => (
-                  <option key={client.id} value={client.id}>
+                {/* <option value="" disabled>Select a tax year before selecting a client</option> */}
+                {clients.map((client, index) => (
+                  <option key={index + "-" + client.id} value={client.id}>
                     {client.id} {client.firstName} {client.lastName}
                   </option>
                 ))}
@@ -219,6 +255,18 @@ export const AddTaxReturnModal = ({ show, handleClose, onTaxReturnAdded }) => {
 
               {filingStatus === 'married_separate' && (
                 <>
+                  {/* <Form.Group>
+                    <Form.Label>Sector for Spouse</Form.Label>
+                    <Form.Control as="select"value={spouseSectorId || ''} onChange={handleSpouseSectorChange}>
+                        <option value="" disabled>Select the spouse's sector</option>
+                      {sectors.map(sector => (
+                        <option key={sector.id} value={sector.id}>
+                          {sector.sectorName}
+                        </option>
+                      ))}
+                    </Form.Control>
+                  </Form.Group> */}
+
                   <Form.Group>
                     <Form.Label>Tax Liability (Spouse)</Form.Label>
                     <Form.Control type="number" value={taxLiabilitySpouse} onChange={e => setTaxLiabilitySpouse(e.target.value)} />
@@ -245,7 +293,7 @@ export const AddTaxReturnModal = ({ show, handleClose, onTaxReturnAdded }) => {
         Close
       </Button>
       <Button variant="primary" onClick={handleSubmit}>
-        Create Tax Return
+        Update Tax Return
       </Button>
     </Modal.Footer>
   </Modal>

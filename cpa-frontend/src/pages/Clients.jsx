@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Container, Row, Col, Button, Modal, Form, Spinner } from 'react-bootstrap';
+import { Card, Row, Col, Button, Modal, Form, Spinner, Alert } from 'react-bootstrap';
 import axios from 'axios';
 
 
@@ -102,14 +102,10 @@ export const Clients = () => {
 
     return (
         <div className="container mt-4">
-        <h2 className="mb-4">Clients</h2>
-        <Row className="mb-4">
-            <Col>
-            <Button variant="primary" onClick={handleAddNewClient}>
-                New Client
-            </Button>
-            </Col>
-        </Row>
+        <div className="d-flex justify-content-between align-items-center">
+            <h2 className="mb-4">Clients</h2>
+            <Button onClick={handleAddNewClient}>New Client</Button>
+        </div>
         <Row>
         {clients.map((client) => (
             <Col key={client.id} xs={12} md={6} lg={4} className="mb-4">
@@ -120,6 +116,9 @@ export const Clients = () => {
                 </Card.Title>
                 <Card.Subtitle className="mb-2 text-muted">{client.email}</Card.Subtitle>
                 <Card.Text>{client.address}</Card.Text>
+                <Alert variant="info">
+                    {(client.taxReturns).length === 1 ? '1 Active Tax Return' : `${(client.taxReturns).length} Active Tax Returns`}
+                </Alert>
                 <Button variant="warning" className="me-2" onClick={() => handleEdit(client)}>
                     Edit
                 </Button>
