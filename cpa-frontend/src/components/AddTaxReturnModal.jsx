@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Row, Col, Alert } from 'react-bootstrap';
 import axios from 'axios';
 
-export const AddTaxReturnModal = ({ show, handleClose }) => {
+export const AddTaxReturnModal = ({ show, handleClose, onTaxReturnAdded }) => {
   const [taxYears, setTaxYears] = useState([]);
   const [taxYear, setTaxYear] = useState('');   // to indicate which year has been selected
   const [taxYearId, setTaxYearId] = useState('');   
@@ -11,6 +11,7 @@ export const AddTaxReturnModal = ({ show, handleClose }) => {
   const [primaryClientId, setPrimaryClientId] = useState('');
   const [spouseClientId, setSpouseClientId] = useState('');
   const [sectorId, setSectorId] = useState(''); // to indicate which sector has been selected
+  const [spouseSectorId, setSpouseSectorId] = useState(''); // to indicate which sector has been selected
 
   const [sectors, setSectors] = useState([]);
   const [taxLiabilityPrimary, setTaxLiabilityPrimary] = useState('');
@@ -37,7 +38,10 @@ export const AddTaxReturnModal = ({ show, handleClose }) => {
     const handleTaxYearChange = (selectedYear) => {
         // Update the taxYear state
         setTaxYear(selectedYear);
-      
+        setFilingStatus(''); // Reset filing status when tax year changes
+        setPrimaryClientId(''); // Reset primary client when tax year changes
+        setSpouseClientId(''); // Reset spouse client when tax year changes
+
         // Fetch clients who don't have returns for the selected year
         fetchClientsForYear(selectedYear);
       };
@@ -58,6 +62,12 @@ export const AddTaxReturnModal = ({ show, handleClose }) => {
     const selectedSectorId = event.target.value;
     setSectorId(selectedSectorId);
   }
+
+  const handleSpouseSectorChange = (event) => {
+    const selectedSectorId = event.target.value;
+    setSpouseSectorId(selectedSectorId); 
+  }
+
 
   const handleFilingStatusChange = (response) => {
     setFilingStatus(response);
@@ -86,23 +96,51 @@ export const AddTaxReturnModal = ({ show, handleClose }) => {
 
   const handleSubmit = () => {
     const taxReturnData = {
-      clientId: parseInt(primaryClientId),
-      spouseId: filingStatus === 'married_joint' || filingStatus === 'married_separate' ? spouseClientId : null,
-      sectorId: parseInt(sectorId), 
-      filingStatus: filingStatus,
-      taxYear: parseInt(taxYear),
-      taxLiability: parseFloat(taxLiabilityPrimary),
-      taxPaid: parseFloat(taxPaidPrimary)
+        clientId: parseInt(primaryClientId),
+        spouseId: filingStatus === 'married_joint' || filingStatus === 'married_separate' ? parseInt(spouseClientId) : null,
+        sectorId: parseInt(sectorId), 
+        filingStatus: filingStatus,
+        taxYear: parseInt(taxYear),
+        taxLiability: parseFloat(taxLiabilityPrimary),
+        taxPaid: parseFloat(taxPaidPrimary)
     };
-    console.log(taxReturnData);
 
     if (filingStatus === 'married_separate') {
-      taxReturnData.spouse_tax_liability = parseFloat(taxLiabilitySpouse);
-      taxReturnData.spouse_tax_paid = parseFloat(taxPaidSpouse);
+        const spouseTaxReturnData = {
+            clientId: parseInt(spouseClientId),
+            spouseId: parseInt(primaryClientId),
+            sectorId: parseInt(spouseSectorId),
+            filingStatus: filingStatus,
+            taxYear: parseInt(taxYear),
+            taxLiability: parseFloat(taxLiabilitySpouse),
+            taxPaid: parseFloat(taxPaidSpouse),
+        }
+
+        console.log("Spouse Tax Return Data", spouseTaxReturnData);
+        console.log("Tax Return Data", taxReturnData);
+
+        axios.post('/return', spouseTaxReturnData).then(response => {   
+            // handleClose(); // Close the modal on successful submission
+            onTaxReturnAdded(response.data); // Call the callback function to update the parent component
+        }).catch(error => {
+            console.error('Error submitting tax return:', error);
+            setShowError(true); // Show error alert
+            setErrorMessage(error.message);
+        });
+
+        axios.post('/return', taxReturnData).then(response => {
+            handleClose(); // Close the modal on successful submission
+            onTaxReturnAdded(response.data); // Call the callback function to update the parent component
+          }).catch(error => {
+            console.error('Error submitting tax return:', error);
+            setShowError(true); // Show error alert
+            setErrorMessage(error.message);
+          });
     }
 
     axios.post('/return', taxReturnData).then(response => {
       handleClose(); // Close the modal on successful submission
+      onTaxReturnAdded(response.data); // Call the callback function to update the parent component
     }).catch(error => {
       console.error('Error submitting tax return:', error);
       setShowError(true); // Show error alert
@@ -189,7 +227,7 @@ export const AddTaxReturnModal = ({ show, handleClose }) => {
                 <Form.Control as="select" value={spouseClientId} onChange={e => handleSpouseClientChange(e.target.value)}>
                   <option value="" disabled>Select Spouse Client</option>
                   {filteredClientsForSpouse.map(client => (
-                    <option key={client.client_id} value={client.client_id}>
+                    <option key={client.id} value={client.id}>
                       {client.firstName} {client.lastName}
                     </option>
                   ))}
@@ -200,7 +238,8 @@ export const AddTaxReturnModal = ({ show, handleClose }) => {
                 <>
                   <Form.Group>
                     <Form.Label>Sector for Spouse</Form.Label>
-                    <Form.Control as="select">
+                    <Form.Control as="select"value={spouseSectorId || ''} onChange={handleSpouseSectorChange}>
+                        <option value="" disabled>Select the spouse's sector</option>
                       {sectors.map(sector => (
                         <option key={sector.id} value={sector.id}>
                           {sector.sectorName}

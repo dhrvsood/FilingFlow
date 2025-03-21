@@ -28,6 +28,9 @@ export const TaxReturns = () => {
         setShowModal(false);
     };
 
+    const addNewTaxReturn = (newTaxReturn) => {
+        setTaxReturns((prevReturns) => [...prevReturns, newTaxReturn]);
+    };
 
     const [taxReturns, setTaxReturns] = useState([]);
     const [filteredReturns, setFilteredReturns] = useState([]);
@@ -125,7 +128,7 @@ export const TaxReturns = () => {
     const uniqueSectors = [...new Set(taxReturns.map(t => t.sector.sectorName))];
 
     return (
-        <div className="container mt-4">
+        <div className="container mt-4 text-center">
             <h2 className="mb-4">Tax Returns</h2>
             <p>Here you can view and manage your tax returns.</p>
             <Row className="mb-4">
@@ -225,6 +228,7 @@ export const TaxReturns = () => {
                                 <tr key={index}>
                                     <td>
                                         <Button onClick={handleShow}>Edit</Button>
+                                        <span> </span>
                                         <Button variant="danger">Delete</Button>
                                     </td>
                                     <td>{taxReturn.client.firstName + " " + taxReturn.client.lastName}</td>
@@ -243,8 +247,8 @@ export const TaxReturns = () => {
                     <p>No tax returns found.</p>
                 )}
             </div>
-            {/* Add Tax Return Button */}
-            <AddTaxReturnModal show={showModal} handleClose={handleCloseModal} />
+            {/* Add Tax Return Modal */}
+            <AddTaxReturnModal show={showModal} handleClose={handleCloseModal} onTaxReturnAdded={addNewTaxReturn}/>
         </div>
     );
 };
