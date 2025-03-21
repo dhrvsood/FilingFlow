@@ -106,7 +106,7 @@ export const AddTaxReturnModal = ({ show, handleClose, onTaxReturnAdded }) => {
           }).catch(error => {
             console.error('Error submitting tax return:', error);
             setShowError(true); // Show error alert
-            setErrorMessage(error.message);
+            setErrorMessage(error.response.data.message);
           });
         
         // spouse client post request
@@ -116,7 +116,7 @@ export const AddTaxReturnModal = ({ show, handleClose, onTaxReturnAdded }) => {
         }).catch(error => {
             console.error('Error submitting tax return:', error);
             setShowError(true); // Show error alert
-            setErrorMessage(error.message);
+            setErrorMessage(error.response.data.message);
         });
     }
 
@@ -126,7 +126,7 @@ export const AddTaxReturnModal = ({ show, handleClose, onTaxReturnAdded }) => {
     }).catch(error => {
       console.error('Error submitting tax return:', error);
       setShowError(true); // Show error alert
-      setErrorMessage(error.message);
+      setErrorMessage(error.response.data.message);
     });
   };
 

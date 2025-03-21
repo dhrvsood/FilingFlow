@@ -16,7 +16,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Frame />}>
-                <Route index element={<TaxReturns/>}/>
+                <Route index element={<Settings/>}/>
                 <Route path="clients" element={<Clients/>}/>
                 <Route path="sectors" element={<Sectors/>}/>
                 <Route path="taxReturns" element={<TaxReturns/>}/>

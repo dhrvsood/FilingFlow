@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Card from 'react-bootstrap/Card';
 import ProgressBar from 'react-bootstrap/ProgressBar';
-import { Button, Modal, Form } from 'react-bootstrap';
+import { Button, Modal, Form, Alert } from 'react-bootstrap';
 
 export const Settings = () => {
     const [capacities, setCapacities] = useState([]);
@@ -12,6 +12,9 @@ export const Settings = () => {
     const [showNewModal, setShowNewModal] = useState(false);
     const [selectedCapacity, setSelectedCapacity] = useState(null);
     const [newCapacity, setNewCapacity] = useState({ taxYear: '', maxNumReturns: '' });
+
+      const [showError, setShowError] = useState(false); // state for showing the error alert
+      const [errorMessage, setErrorMessage] = useState(''); // state for error message
 
     useEffect(() => {
         // Fetch capacity data
@@ -65,7 +68,11 @@ export const Settings = () => {
                 setCapacities(capacities.map(cap => cap.id === selectedCapacity.id ? selectedCapacity : cap));
                 setShowEditModal(false);
             })
-            .catch(error => console.error('Failed to update capacity:', error));
+            .catch(error => {
+                console.error('Failed to update capacity:', error);
+                setShowError(true); // Show error alert
+                setErrorMessage(error.response.data.message); // Set error message
+            });
     };
 
     // Confirm new capacity
@@ -75,7 +82,11 @@ export const Settings = () => {
                 setCapacities([...capacities, response.data]);
                 setShowNewModal(false);
             })
-            .catch(error => console.error('Failed to create new capacity:', error));
+            .catch(error => {
+                console.error('Failed to create new capacity:', error);
+                setShowError(true); // Show error alert
+                setErrorMessage(error.response.data.message); // Set error message
+            });
     };
 
     return (
@@ -97,7 +108,7 @@ export const Settings = () => {
                             </Card.Body>
                             <Card.Footer>
                                 <Button variant="warning" className="me-2" onClick={() => handleEdit(capacity)}>Edit</Button>
-                                <Button variant="danger" onClick={() => handleDelete(capacity)}>Delete</Button>
+                                <Button variant="danger" onClick={() => handleDelete(capacity)} disabled={counts[capacity.taxYear] !== 0}>Delete</Button>
                             </Card.Footer>
                         </Card>
                     </div>
@@ -128,6 +139,11 @@ export const Settings = () => {
                             />
                         </Form.Group>
                     </Form>
+                {showError && (
+                <Alert variant="danger" onClose={() => setShowError(false)} dismissible>
+                {errorMessage}
+                </Alert>
+                )}
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => setShowEditModal(false)}>Close</Button>
@@ -147,7 +163,7 @@ export const Settings = () => {
                 </Modal.Footer>
             </Modal>
 
-            {/* New Capacity Modal */}
+            {/* Add Capacity */}
             <Modal show={showNewModal} onHide={() => setShowNewModal(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>New Capacity</Modal.Title>
@@ -171,12 +187,19 @@ export const Settings = () => {
                             />
                         </Form.Group>
                     </Form>
+                {showError && (
+                <Alert variant="danger" onClose={() => setShowError(false)} dismissible>
+                {errorMessage}
+                </Alert>
+                )}
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => setShowNewModal(false)}>Close</Button>
                     <Button variant="primary" onClick={confirmNew}>Create</Button>
                 </Modal.Footer>
             </Modal>
+
+            
         </div>
     );
 };

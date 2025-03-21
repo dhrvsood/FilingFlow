@@ -41,6 +41,9 @@ export const TaxReturns = () => {
 
     const [taxReturns, setTaxReturns] = useState([]);
     const [filteredReturns, setFilteredReturns] = useState([]);
+
+    const [taxYears, setTaxYears] = useState([]);
+    const [sectors, setSectors] = useState([]);
     
     // Filters state
     const [filterFilingStatus, setFilterFilingStatus] = useState('');
@@ -67,6 +70,14 @@ export const TaxReturns = () => {
 
     // Fetch tax returns data when the component mounts
     useEffect(() => {
+        axios.get('/capacity').then(response => {
+            setTaxYears(response.data);
+        }).catch(err => console.error(err));
+
+        axios.get('/sector').then(response => {
+            setSectors(response.data);
+        }).catch(err => console.error(err));
+
         const getAllReturns = async () => {
             try {
                 const response = await axios.get('/return');
@@ -153,20 +164,16 @@ export const TaxReturns = () => {
 
     // Extract unique values for dropdowns
     const uniqueFilingStatuses = [...new Set(taxReturns.map(t => t.filingStatus))];
-    const uniqueTaxYears = [...new Set(taxReturns.map(t => t.taxYear))];
+    // const uniqueTaxYears = [...new Set(taxReturns.map(t => t.taxYear))];
+    const uniqueTaxYears = taxYears.map(year => year.taxYear);
     const uniqueSectors = [...new Set(taxReturns.map(t => t.sector.sectorName))];
 
     return (
-        <div className="container mt-4 text-center">
+        <div className="container mt-4">
+            <div className="d-flex justify-content-between align-items-center">
             <h2 className="mb-4">Tax Returns</h2>
-            <p>Here you can view and manage your tax returns.</p>
-            <Row className="mb-4">
-                <Col>
-                <Button variant="primary" onClick={handleShowModal}>
-                    New Tax Return
-                </Button>
-                </Col>
-            </Row>
+            <Button variant="primary" onClick={handleShowModal}>New Tax Return</Button>
+            </div>
             {/* Filter Section */}
             <div className="mb-4 d-flex gap-3">
                 {/* Filing Status Filter */}
@@ -220,26 +227,26 @@ export const TaxReturns = () => {
             </div>
 
             {/* Table */}
-            <div>
+            <div className='text-center'>
                 {filteredReturns.length > 0 ? (
                     <Table striped bordered hover>
                         <thead>
                             <tr>
                                 <th></th>
-                                <th onClick={() => handleSort('client.firstName')}>
-                                    Client Name {getSortIcon('client.firstName')}
+                                <th>
+                                    Client Name
                                 </th>
-                                <th onClick={() => handleSort('spouse.firstName')}>
-                                    Spouse Name {getSortIcon('spouse.firstName')}
+                                <th>
+                                    Spouse Name
                                 </th>
-                                <th onClick={() => handleSort('filingStatus')}>
-                                    Filing Status {getSortIcon('filingStatus')}
+                                <th>
+                                    Filing Status
                                 </th>
-                                <th onClick={() => handleSort('taxYear')}>
-                                    Tax Year {getSortIcon('taxYear')}
+                                <th>
+                                    Tax Year
                                 </th>
-                                <th onClick={() => handleSort('sector.sectorName')}>
-                                    Sector {getSortIcon('sector.sectorName')}
+                                <th>
+                                    Sector
                                 </th>
                                 <th onClick={() => handleSort('taxLiability')}>
                                     Tax Liability {getSortIcon('taxLiability')}
@@ -260,7 +267,7 @@ export const TaxReturns = () => {
                                         <span> </span>
                                         <Button variant="danger" value={taxReturn.id} onClick={() => handleDelete(taxReturn)}>Delete</Button>
                                     </td>
-                                    <td>{taxReturn.client.id + " " + taxReturn.client.firstName + " " + taxReturn.client.lastName}</td>
+                                    <td>{taxReturn.client.firstName + " " + taxReturn.client.lastName}</td>
                                     <td>{taxReturn.spouse ? `${taxReturn.spouse.firstName} ${taxReturn.spouse.lastName}` : ''}</td>
                                     <td>{taxReturn.filingStatus}</td>
                                     <td>{taxReturn.taxYear}</td>
