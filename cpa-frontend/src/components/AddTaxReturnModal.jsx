@@ -185,7 +185,7 @@ export const AddTaxReturnModal = ({ show, handleClose, onTaxReturnAdded }) => {
                 <option value="" disabled>Select a tax year before selecting a client</option>
                 {clients.map(client => (
                   <option key={client.id} value={client.id}>
-                    {client.id} {client.firstName} {client.lastName}
+                    {client.firstName} {client.lastName}
                   </option>
                 ))}
               </Form.Control>

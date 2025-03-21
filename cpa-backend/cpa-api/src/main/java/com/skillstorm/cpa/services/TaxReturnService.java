@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.skillstorm.cpa.dtos.TaxReturnDTO;
 import com.skillstorm.cpa.exceptions.ExceededCapacityException;
+import com.skillstorm.cpa.exceptions.InvalidTaxReturnException;
 import com.skillstorm.cpa.models.Capacity;
 import com.skillstorm.cpa.models.Client;
 import com.skillstorm.cpa.models.Sector;
@@ -65,7 +66,9 @@ public class TaxReturnService {
 	}
 	
 	// create one 
-	public ResponseEntity<TaxReturn> createOne(TaxReturnDTO dto) { 
+	public ResponseEntity<TaxReturn> createOne(TaxReturnDTO dto) {
+		if (dto.clientId() == dto.spouseId())
+			throw new InvalidTaxReturnException("Client ID cannot be same as Spouse ID");
 		// 1. Check capacity for the given year
 		Optional<Capacity> capacityOpt = capacityRepo.findByYear(dto.taxYear());
 		if (!capacityOpt.isPresent())
@@ -100,6 +103,9 @@ public class TaxReturnService {
 	
 	// update one
 	public ResponseEntity<TaxReturn> updateOne(int id, TaxReturnDTO dto) {
+		if (dto.clientId() == dto.spouseId())
+			throw new InvalidTaxReturnException("Client ID cannot be same as Spouse ID");
+		
 		Client client = clientRepo.findById(dto.clientId()).get();
 		Client spouse = null;
 		if (dto.spouseId() != null)

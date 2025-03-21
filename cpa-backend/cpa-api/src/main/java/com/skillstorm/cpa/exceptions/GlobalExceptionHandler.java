@@ -28,4 +28,13 @@ public class GlobalExceptionHandler {
 		body.put("message", ex.getMessage());
 		return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST); // 400 Bad Request
 	}
+	
+	@ExceptionHandler(InvalidTaxReturnException.class)
+	public ResponseEntity<Map<String, Object>> handleInvalidTaxReturnException(InvalidTaxReturnException ex) {
+		Map<String, Object> body = new LinkedHashMap<>();
+		body.put("status", HttpStatus.BAD_REQUEST);
+		body.put("error", "Invalid Tax Return");
+		body.put("message", ex.getMessage());
+		return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST); // 400 Bad Request
+	}
 }

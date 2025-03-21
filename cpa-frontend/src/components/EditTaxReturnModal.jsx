@@ -218,10 +218,9 @@ export const EditTaxReturnModal = ({ show, handleClose, selectedTaxReturn }) => 
               <Form.Label>Primary Client</Form.Label>
               {/* <Form.Control type="text" value={primaryClientId} /> */}
               <Form.Control as="select" value={primaryClientId} onChange={e => handlePrimaryClientChange(e.target.value)}>
-                {/* <option value="" disabled>Select a tax year before selecting a client</option> */}
                 {clients.map((client, index) => (
                   <option key={index + "-" + client.id} value={client.id}>
-                    {client.id} {client.firstName} {client.lastName}
+                    {client.firstName} {client.lastName}
                   </option>
                 ))}
               </Form.Control>
@@ -255,17 +254,6 @@ export const EditTaxReturnModal = ({ show, handleClose, selectedTaxReturn }) => 
 
               {filingStatus === 'married_separate' && (
                 <>
-                  {/* <Form.Group>
-                    <Form.Label>Sector for Spouse</Form.Label>
-                    <Form.Control as="select"value={spouseSectorId || ''} onChange={handleSpouseSectorChange}>
-                        <option value="" disabled>Select the spouse's sector</option>
-                      {sectors.map(sector => (
-                        <option key={sector.id} value={sector.id}>
-                          {sector.sectorName}
-                        </option>
-                      ))}
-                    </Form.Control>
-                  </Form.Group> */}
 
                   <Form.Group>
                     <Form.Label>Tax Liability (Spouse)</Form.Label>
