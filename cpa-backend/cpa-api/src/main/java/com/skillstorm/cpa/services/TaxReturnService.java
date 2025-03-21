@@ -9,9 +9,13 @@ import org.springframework.stereotype.Service;
 
 import com.skillstorm.cpa.dtos.TaxReturnDTO;
 import com.skillstorm.cpa.models.Capacity;
+import com.skillstorm.cpa.models.Client;
+import com.skillstorm.cpa.models.Sector;
 import com.skillstorm.cpa.models.TaxReturn;
 import com.skillstorm.cpa.models.TaxReturn.FilingStatus;
 import com.skillstorm.cpa.repositories.CapacityRepository;
+import com.skillstorm.cpa.repositories.ClientRepository;
+import com.skillstorm.cpa.repositories.SectorRepository;
 import com.skillstorm.cpa.repositories.TaxReturnRepository;
 
 @Service
@@ -23,6 +27,11 @@ public class TaxReturnService {
 	@Autowired
 	private CapacityRepository capacityRepo;
 	
+	@Autowired
+	private ClientRepository clientRepo;
+	
+	@Autowired
+	private SectorRepository sectorRepo;
 	
 	public TaxReturnService(TaxReturnRepository repo) {
 		this.repo = repo;
@@ -40,12 +49,18 @@ public class TaxReturnService {
 	
 	// find by id 
 	public ResponseEntity<TaxReturn> findById(int id) {
-		Optional<TaxReturn> client = repo.findById(id);
+		Optional<TaxReturn> taxReturn = repo.findById(id);
 		
-		if (client.isEmpty())
+		if (taxReturn.isEmpty())
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		else
-			return ResponseEntity.status(HttpStatus.OK).body(client.get());
+			return ResponseEntity.status(HttpStatus.OK).body(taxReturn.get());
+	}
+	
+	// get count by year
+	public int countByTaxYear(int year) {
+		int taxReturnCount = repo.countByTaxYear(year);
+		return taxReturnCount;	
 	}
 	
 	// create one 
@@ -65,20 +80,35 @@ public class TaxReturnService {
 		int taxReturnsToAdd = dto.filingStatus() == FilingStatus.married_separate ? 2 : 1;
 		if (currentTaxReturns + taxReturnsToAdd > capacity.getMaxNumReturns())
 			throw new RuntimeException("Exceeding capacity limit for year " + dto.taxYear() + ": ");
-
+		
+		Client client = clientRepo.findById(dto.clientId()).get();
+		Client spouse = null;
+		if (dto.spouseId() != null)
+			spouse = clientRepo.findById(dto.spouseId()).get();
+		Sector sector = sectorRepo.findById(dto.sectorId()).get();
+		
+		TaxReturn tr = new TaxReturn(0, client, spouse, sector, dto.taxYear(), dto.filingStatus(), dto.taxLiability(), dto.taxPaid());
+		
 		try {
-			return ResponseEntity.status(HttpStatus.CREATED)
-								 .body(repo.save(new TaxReturn(0, dto.client(), dto.spouse(), dto.sector(), dto.taxYear(), dto.filingStatus(), dto.taxLiability(), dto.taxPaid())));
+			return ResponseEntity.status(HttpStatus.CREATED).body(repo.save(tr));
 		} catch (Exception e) {
+			e.printStackTrace();
 			return ResponseEntity.status(500).body(null);
 		}
 	}
 	
 	// update one
 	public ResponseEntity<TaxReturn> updateOne(int id, TaxReturnDTO dto) {
+		Client client = clientRepo.findById(dto.clientId()).get();
+		Client spouse = null;
+		if (dto.spouseId() != null)
+			spouse = clientRepo.findById(dto.spouseId()).get();
+		Sector sector = sectorRepo.findById(dto.sectorId()).get();
+		
+		TaxReturn tr = new TaxReturn(0, client, spouse, sector, dto.taxYear(), dto.filingStatus(), dto.taxLiability(), dto.taxPaid());
+		
 		if (repo.existsById(id))
-			return ResponseEntity.status(HttpStatus.OK)
-					 			 .body(new TaxReturn(id, dto.client(), dto.spouse(), dto.sector(), dto.taxYear(), dto.filingStatus(), dto.taxLiability(), dto.taxPaid()));
+			return ResponseEntity.status(HttpStatus.OK).body(repo.save(tr));
 		else
 			return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
 	}

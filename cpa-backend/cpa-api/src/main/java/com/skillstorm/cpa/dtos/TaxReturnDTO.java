@@ -6,6 +6,6 @@ import com.skillstorm.cpa.models.Client;
 import com.skillstorm.cpa.models.Sector;
 import com.skillstorm.cpa.models.TaxReturn.FilingStatus;
 
-public record TaxReturnDTO(Client client, Client spouse, Sector sector, int taxYear, FilingStatus filingStatus, BigDecimal taxLiability, BigDecimal taxPaid) {
+public record TaxReturnDTO(int clientId, Integer spouseId, int sectorId, int taxYear, FilingStatus filingStatus, BigDecimal taxLiability, BigDecimal taxPaid) {
 
 }

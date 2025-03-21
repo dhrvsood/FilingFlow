@@ -79,6 +79,12 @@ public class ClientService {
 		}
 	}
 	
+	// Method to get clients who haven't filed a return for the selected year
+	public ResponseEntity<Iterable<Client>> findClientsWithoutReturnForYear(int taxYear) {
+		Iterable<Client> clients = repo.findClientsWithoutReturnForYear(taxYear);
+		return ResponseEntity.status(HttpStatus.OK).body(clients);
+	}
+	
 	// create one 
 	public ResponseEntity<Client> createOne(ClientDTO dto) { 
 		try {

@@ -101,7 +101,8 @@ export const Clients = () => {
     }    
 
     return (
-        <Container>
+        <div className="container mt-4">
+        <h2 className="mb-4">Clients</h2>
         <Row className="mb-4">
             <Col>
             <Button variant="primary" onClick={handleAddNewClient}>
@@ -256,6 +257,6 @@ export const Clients = () => {
             </Button>
             </Modal.Footer>
         </Modal>
-        </Container>
+        </div>
       );
     };

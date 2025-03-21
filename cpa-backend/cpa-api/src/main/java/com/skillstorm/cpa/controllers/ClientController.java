@@ -34,7 +34,12 @@ public class ClientController {
 	@GetMapping("/{id}")
 	public ResponseEntity<Client> findById(@PathVariable int id) {
 		return service.findById(id);
-	}	
+	}
+	
+	@GetMapping("/year/{taxYear}")
+	public ResponseEntity<Iterable<Client>> findClientsWithoutReturnForYear(@PathVariable int taxYear) {
+		return service.findClientsWithoutReturnForYear(taxYear);
+	}
 	
 	// create one
 	@PostMapping

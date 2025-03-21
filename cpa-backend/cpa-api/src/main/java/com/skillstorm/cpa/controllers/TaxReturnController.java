@@ -36,6 +36,12 @@ public class TaxReturnController {
 		return service.findById(id);
 	}	
 	
+	// get count by year
+	@GetMapping("/count/{year}")
+	public int countByTaxYear(@PathVariable int year) {
+		return service.countByTaxYear(year);
+	}
+	
 	// create one
 	@PostMapping
 	public ResponseEntity<TaxReturn> createOne(@RequestBody TaxReturnDTO dto) {

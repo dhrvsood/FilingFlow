@@ -22,6 +22,9 @@ public interface TaxReturnRepository extends CrudRepository<TaxReturn, Integer> 
 	@Query(value = "SELECT * FROM tax_return WHERE filing_status = ?1", nativeQuery = true)
 	public Iterable<TaxReturn> findByFilingStatus(FilingStatus filingStatus);
 	
-	@Query(value = "SELECT COUNT(*) FROM tax_return WHERE tax_year = ?1", nativeQuery = true)
+//	@Query(value = "SELECT COUNT(*) FROM tax_return WHERE tax_year = ?1", nativeQuery = true)
+	@Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN COUNT(*) ELSE -1 END FROM tax_return WHERE tax_year = ?1", nativeQuery = true)
 	public int countByTaxYear(int taxYear);
+	
+	
 }

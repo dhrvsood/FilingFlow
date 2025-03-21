@@ -5,16 +5,16 @@ import Container from 'react-bootstrap/Container';
 
 export const NavBar = () => {
     const links = [
-        { linkName: "All Returns", linkDestination: "/taxReturns" },
-        { linkName: "Clients", linkDestination: "/clients" },
-        { linkName: "Sectors", linkDestination: "/sectors" },
         { linkName: "Settings", linkDestination: "/settings" },
+        { linkName: "Sectors", linkDestination: "/sectors" },
+        { linkName: "Clients", linkDestination: "/clients" },
+        { linkName: "All Returns", linkDestination: "/taxReturns" }
     ]
 
     return (
-        <Navbar expand="lg" className="bg-body-tertiary">
+        <Navbar expand="lg" className="bg-body-secondary">
             <Container>
-                <Navbar.Brand href="taxReturns">FilingFlow</Navbar.Brand>
+                <Navbar.Brand href="settings">FilingFlow</Navbar.Brand>
                 <Nav className="me-auto">
                     { links.map(link => (
                         <Nav.Link href={ link.linkDestination } key={ link.linkName }>
