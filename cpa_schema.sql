@@ -41,61 +41,53 @@ CREATE TABLE cpa.`capacity` (
     CONSTRAINT unique_year UNIQUE (year)
 );
 
-INSERT INTO capacity (year, max_num_returns) VALUES (2024, 150);
+-- Insert into Capacity table
+INSERT INTO cpa.capacity (year, max_num_returns) VALUES
+(2022, 7),
+(2023, 8),
+(2024, 5);
 
-INSERT INTO cpa.client (first_name, last_name, email, address)
-VALUES
-('John', 'Doe', 'john.doe@example.com', '123 Main St, City A'),
-('Jane', 'Doe', 'jane.doe@example.com', '123 Main St, City A'),
-('Mike', 'Smith', 'mike.smith@example.com', '456 Oak St, City B'),
-('Emily', 'Smith', 'emily.smith@example.com', '456 Oak St, City B'),
-('Tom', 'Brown', 'tom.brown@example.com', '789 Pine St, City C'),
-('Sarah', 'Brown', 'sarah.brown@example.com', '789 Pine St, City C'),
-('Chris', 'Johnson', 'chris.johnson@example.com', '101 Maple St, City D'),
-('Alex', 'Jones', 'alex.jones@example.com', '102 Maple St, City D'),
-('Taylor', 'Davis', 'taylor.davis@example.com', '103 Maple St, City D'),
-('Morgan', 'Lee', 'morgan.lee@example.com', '104 Maple St, City E'),
-('Jordan', 'White', 'jordan.white@example.com', '105 Maple St, City F'),
-('Jamie', 'Black', 'jamie.black@example.com', '106 Maple St, City F'),
-('Sam', 'Green', 'sam.green@example.com', '107 Maple St, City G'),
-('Kelly', 'Blue', 'kelly.blue@example.com', '108 Maple St, City H'),
-('Pat', 'Yellow', 'pat.yellow@example.com', '109 Maple St, City I');
+-- Insert into Sector table
+INSERT INTO cpa.sector (sector_name) VALUES
+('corporate'),
+('military'),
+('education'),
+('healthcare'),
+('technology'),
+('non-profit');
 
-INSERT INTO cpa.sector (sector_name)
-VALUES
-('Technology'),
-('Healthcare'),
-('Retail'),
-('Finance'),
-('Military');
+-- Insert into Client table
+INSERT INTO cpa.client (first_name, last_name, email, address) VALUES
+('John', 'Doe', 'john.doe@example.com', '123 Main St, Cityville'),
+('Jane', 'Smith', 'jane.smith@example.com', '456 Maple Ave, Townsville'),
+('James', 'Johnson', 'james.johnson@example.com', '789 Oak Dr, Villagetown'),
+('Emily', 'Brown', 'emily.brown@example.com', '101 Pine Rd, Cityville'),
+('Michael', 'Davis', 'michael.davis@example.com', '202 Elm St, Townsville'),
+('Sarah', 'Miller', 'sarah.miller@example.com', '303 Cedar Ln, Villagetown'),
+('David', 'Wilson', 'david.wilson@example.com', '404 Birch St, Cityville'),
+('Anna', 'Moore', 'anna.moore@example.com', '505 Ash Ave, Townsville'),
+('Christopher', 'Taylor', 'christopher.taylor@example.com', '606 Redwood Dr, Villagetown'),
+('Jessica', 'Anderson', 'jessica.anderson@example.com', '707 Fir St, Cityville'),
+('Robert', 'Thomas', 'robert.thomas@example.com', '808 Spruce Ave, Townsville'),
+('Laura', 'Jackson', 'laura.jackson@example.com', '909 Poplar Rd, Villagetown'),
+('Daniel', 'White', 'daniel.white@example.com', '1001 Walnut St, Cityville'),
+('Olivia', 'Harris', 'olivia.harris@example.com', '1102 Magnolia Ln, Townsville'),
+('Matthew', 'Martin', 'matthew.martin@example.com', '1203 Cherry Ave, Villagetown'),
+('Sophia', 'Garcia', 'sophia.garcia@example.com', '1304 Plum Dr, Cityville'),
+('Joshua', 'Martinez', 'joshua.martinez@example.com', '1405 Dogwood Rd, Townsville'),
+('Emma', 'Rodriguez', 'emma.rodriguez@example.com', '1506 Cypress St, Villagetown'),
+('Anthony', 'Clark', 'anthony.clark@example.com', '1607 Willow Ln, Cityville'),
+('Mia', 'Lewis', 'mia.lewis@example.com', '1708 Hemlock Rd, Townsville');
 
--- Single clients
-INSERT INTO cpa.tax_return (client_id, spouse_id, sector_id, tax_year, filing_status, tax_liability, tax_paid)
-VALUES
-(1, NULL, 1, 2022, 'single', 5000.00, 4800.00),
-(3, NULL, 3, 2023, 'single', 3500.00, 3400.00),
-(5, NULL, 4, 2024, 'single', 4200.00, 4100.00),
-(8, NULL, 5, 2022, 'single', 6000.00, 6000.00),
-(9, NULL, 2, 2023, 'single', 3000.00, 2900.00);
-
--- Married clients filing jointly
-INSERT INTO cpa.tax_return (client_id, spouse_id, sector_id, tax_year, filing_status, tax_liability, tax_paid)
-VALUES
-(1, 2, 1, 2023, 'married_joint', 9000.00, 8900.00),
-(3, 4, 3, 2024, 'married_joint', 7500.00, 7400.00),
-(5, 6, 4, 2022, 'married_joint', 12000.00, 11900.00);
-
--- Married clients filing separately
-INSERT INTO cpa.tax_return (client_id, spouse_id, sector_id, tax_year, filing_status, tax_liability, tax_paid)
-VALUES
-(7, 8, 5, 2024, 'married_separate', 4500.00, 4400.00),
-(8, 7, 5, 2024, 'married_separate', 4600.00, 4500.00),
-(9, 10, 2, 2022, 'married_separate', 2800.00, 2700.00),
-(10, 9, 2, 2022, 'married_separate', 2900.00, 2800.00);
-
--- Business clients
-INSERT INTO cpa.tax_return (client_id, spouse_id, sector_id, tax_year, filing_status, tax_liability, tax_paid)
-VALUES
-(11, NULL, 3, 2022, 'business', 10000.00, 9800.00),
-(12, NULL, 4, 2023, 'business', 8000.00, 7800.00),
-(13, NULL, 5, 2024, 'business', 9500.00, 9300.00);
+-- Insert into Tax Return table
+INSERT INTO cpa.tax_return (client_id, spouse_id, sector_id, tax_year, filing_status, tax_liability, tax_paid) VALUES
+(1, NULL, 1, 2022, 'single', 12000.00, 11000.00),  -- Corporate sector, single
+(2, 1, 1, 2022, 'married_joint', 24000.00, 25000.00),  -- Joint filing, Corporate sector
+(3, NULL, 2, 2023, 'single', 10000.00, 10000.00),  -- Military sector, single
+(4, NULL, 3, 2023, 'single', 9000.00, 9500.00),  -- Education sector, single, paid more than liability
+(5, NULL, 4, 2024, 'single', 15000.00, 14000.00),  -- Healthcare sector, single
+(6, 5, 4, 2024, 'married_joint', 30000.00, 29000.00),  -- Joint filing, Healthcare sector
+(7, NULL, 5, 2022, 'single', 13000.00, 13000.00),  -- Technology sector, single
+(8, NULL, 6, 2023, 'single', 11000.00, 10000.00),  -- Non-profit sector, single
+(9, 10, 5, 2023, 'married_separate', 20000.00, 21000.00),  -- Separate filing, Technology sector
+(10, 9, 5, 2023, 'married_separate', 18000.00, 17000.00);  -- Separate filing, Technology sector

@@ -103,7 +103,7 @@ public class TaxReturnService {
 	
 	// update one
 	public ResponseEntity<TaxReturn> updateOne(int id, TaxReturnDTO dto) {
-		if (dto.clientId() == dto.spouseId())
+		if (dto.spouseId() != null && dto.clientId() == dto.spouseId())
 			throw new InvalidTaxReturnException("Client ID cannot be same as Spouse ID");
 		
 		Client client = clientRepo.findById(dto.clientId()).get();

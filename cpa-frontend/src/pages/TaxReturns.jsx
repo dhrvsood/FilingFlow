@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form'; // For dropdowns
 import { FaSort, FaSortUp, FaSortDown } from 'react-icons/fa'; // Sorting icons
 import axios from 'axios';
@@ -68,8 +66,7 @@ export const TaxReturns = () => {
         setShowDeleteModal(true);
     }
 
-    // Fetch tax returns data when the component mounts
-    useEffect(() => {
+    const getAllReturns = async () => {    
         axios.get('/capacity').then(response => {
             setTaxYears(response.data);
         }).catch(err => console.error(err));
@@ -78,16 +75,17 @@ export const TaxReturns = () => {
             setSectors(response.data);
         }).catch(err => console.error(err));
 
-        const getAllReturns = async () => {
-            try {
-                const response = await axios.get('/return');
-                setTaxReturns(response.data);
-                setFilteredReturns(response.data);  // Set both original and filtered data
-            } catch (error) {
-                console.error('Error fetching tax returns:', error);
-            }
-        };
+        try {
+            const response = await axios.get('/return');
+            setTaxReturns(response.data);
+            setFilteredReturns(response.data);  // Set both original and filtered data
+        } catch (error) {
+            console.error('Error fetching tax returns:', error);
+        }
+    };
 
+    // Fetch tax returns data when the component mounts
+    useEffect(() => {
         getAllReturns();  // Trigger the fetch on component mount
     }, []);
 
@@ -308,7 +306,7 @@ export const TaxReturns = () => {
             </Modal>
 
             {/* Edit Tax Return Modal */}
-            <EditTaxReturnModal show={showEditModal} handleClose={handleCloseEditModal} selectedTaxReturn={selectedTaxReturn}/>
+            <EditTaxReturnModal show={showEditModal} handleClose={handleCloseEditModal} selectedTaxReturn={selectedTaxReturn} getAllReturns={getAllReturns}/>
             {/* Add Tax Return Modal */}
             <AddTaxReturnModal show={showModal} handleClose={handleCloseModal} onTaxReturnAdded={addNewTaxReturn}/>
         </div>

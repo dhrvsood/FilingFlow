@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Row, Col, Alert } from 'react-bootstrap';
 import axios from 'axios';
 
-export const EditTaxReturnModal = ({ show, handleClose, selectedTaxReturn }) => {
+export const EditTaxReturnModal = ({ show, handleClose, selectedTaxReturn, getAllReturns }) => {
   const taxReturnId = selectedTaxReturn?.id || '';
 
   const [taxYears, setTaxYears] = useState([]);
@@ -157,6 +157,7 @@ export const EditTaxReturnModal = ({ show, handleClose, selectedTaxReturn }) => 
         // single or married_joint post request
         axios.put(`/return/${taxReturnId}`, taxReturnData).then(response => {
             handleClose(); // Close the modal on successful submission
+            getAllReturns();
         }).catch(error => {
             console.error('Error submitting tax return:', error);
             setShowError(true); // Show error alert
