@@ -160,6 +160,26 @@ export const TaxReturns = () => {
         handleFilterChange();
     }, [filterFilingStatus, filterTaxYear, filterSector, searchClientName, searchSpouseName]);
 
+    const filingStatusConverter = (status) => {
+        switch (status) {
+            case 'single':
+                return 'Single';
+                break;
+            case 'married_joint':
+                return 'Married Filing Jointly';
+                break;
+            case 'married_separate':
+                return 'Married Filing Separately';
+                break;
+            case 'business':
+                return 'Business';
+                break;
+            default:
+                return 'Unknown';
+                break;
+        }
+    }
+
     // Extract unique values for dropdowns
     const uniqueFilingStatuses = [...new Set(taxReturns.map(t => t.filingStatus))];
     // const uniqueTaxYears = [...new Set(taxReturns.map(t => t.taxYear))];
@@ -180,7 +200,7 @@ export const TaxReturns = () => {
                     <Form.Select value={filterFilingStatus} onChange={(e) => setFilterFilingStatus(e.target.value)}>
                         <option value="">All</option>
                         {uniqueFilingStatuses.map((status, index) => (
-                            <option key={index} value={status}>{status}</option>
+                            <option key={index} value={status}>{filingStatusConverter(status)}</option>
                         ))}
                     </Form.Select>
                 </Form.Group>
@@ -267,7 +287,7 @@ export const TaxReturns = () => {
                                     </td>
                                     <td>{taxReturn.client.firstName + " " + taxReturn.client.lastName}</td>
                                     <td>{taxReturn.spouse ? `${taxReturn.spouse.firstName} ${taxReturn.spouse.lastName}` : ''}</td>
-                                    <td>{taxReturn.filingStatus}</td>
+                                    <td>{filingStatusConverter(taxReturn.filingStatus)}</td>
                                     <td>{taxReturn.taxYear}</td>
                                     <td>{taxReturn.sector.sectorName}</td>
                                     <td>{taxReturn.taxLiability.toFixed(2)}</td>
