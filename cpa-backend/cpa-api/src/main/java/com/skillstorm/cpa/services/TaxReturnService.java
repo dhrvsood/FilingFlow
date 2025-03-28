@@ -67,8 +67,19 @@ public class TaxReturnService {
 	
 	// create one 
 	public ResponseEntity<TaxReturn> createOne(TaxReturnDTO dto) {
-		if (dto.clientId() == dto.spouseId())
+		if (dto.spouseId() != null && dto.clientId() == dto.spouseId())
 			throw new InvalidTaxReturnException("Client ID cannot be same as Spouse ID");
+		
+		// Check if client or spouse has already filed a tax return for the given year
+		boolean exists = repo.existsByTaxYearAndClientOrSpouse(dto.taxYear(), dto.clientId(), dto.spouseId()) > 0;
+		System.out.println(exists);
+		
+		if (exists) {
+			String clientName = clientRepo.findById(dto.clientId()).get().getFirstName() + " " + clientRepo.findById(dto.clientId()).get().getLastName();
+			String spouseName = clientRepo.findById(dto.spouseId()).get().getFirstName() + " " + clientRepo.findById(dto.spouseId()).get().getLastName();
+			throw new InvalidTaxReturnException(clientName + " or " + spouseName + " have already filed a return for the year " + dto.taxYear());
+		}
+		
 		// 1. Check capacity for the given year
 		Optional<Capacity> capacityOpt = capacityRepo.findByYear(dto.taxYear());
 		if (!capacityOpt.isPresent())

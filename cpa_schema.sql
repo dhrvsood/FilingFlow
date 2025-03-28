@@ -31,6 +31,7 @@ CREATE TABLE cpa.`tax_return` (
     CONSTRAINT fk_sector FOREIGN KEY (sector_id) REFERENCES Sector(sector_id),
     CONSTRAINT unique_tax_return_per_year UNIQUE (client_id, tax_year),  -- Ensure one return per client per year
     CONSTRAINT unique_joint_filing UNIQUE (client_id, spouse_id, tax_year)  -- Ensure only one joint return per couple
+    CONSTRAINT unique_person_in_tax_return UNIQUE (tax_year, client_id, spouse_id) -- Prevents either client or spouse from appearing in more than one return for the same year
 );
 
 -- CAPACITY TABLE

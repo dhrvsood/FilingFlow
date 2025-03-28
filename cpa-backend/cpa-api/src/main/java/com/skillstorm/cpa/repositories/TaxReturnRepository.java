@@ -25,5 +25,15 @@ public interface TaxReturnRepository extends CrudRepository<TaxReturn, Integer> 
 	@Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN COUNT(*) ELSE 0 END FROM tax_return WHERE tax_year = ?1", nativeQuery = true)
 	public int countByTaxYear(int taxYear);
 	
+
+    @Query(value = "SELECT COUNT(*) " +
+            "FROM cpa.tax_return tr " +
+            "WHERE tr.tax_year = ?1 AND " +
+            "(tr.client_id = ?2 OR tr.spouse_id = ?2 OR " +
+            "(tr.client_id = ?3 OR tr.spouse_id = ?3) OR " +
+            "(?3 IS NULL AND (tr.client_id = ?2 OR tr.spouse_id = ?2)))", 
+    nativeQuery = true)
+	public int existsByTaxYearAndClientOrSpouse(int taxYear, int clientId, Integer spouseId);
+	
 	
 }
