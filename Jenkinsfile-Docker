@@ -7,15 +7,15 @@ pipeline {
                 // script {
                 //     env.DOCKER_IMAGE = "dal-alpine"
                 // }
-            }
-            sh '''
-                echo Building Docker Image: aws-cli ...
-                docker build-f aws-docker/Dockerfile -t aws-cli
-                # ^ allows the docker aws image to solely be 'aws-cli' in lieu of 'amazon/aws-cli'
+                sh '''
+                    echo Building Docker Image: aws-cli ...
+                    docker build-f aws-docker/Dockerfile -t aws-cli
+                    # ^ allows the docker aws image to solely be 'aws-cli' in lieu of 'amazon/aws-cli'
 
-                # future DB Docker build
-                echo "Building Docker Image: $DOCKER_IMAGE"
-            '''
+                    # future DB Docker build
+                    echo "Building Docker Image: $DOCKER_IMAGE"
+                '''
+            }
         }
     }
 }
