@@ -1,0 +1,61 @@
+# version: "3.8"
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: db-container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: cpa
+      MYSQL_USER: user
+      MYSQL_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql  # Persist data
+      - ./db/cpa_schema.sql:/docker-entrypoint-initdb.d/cpa_schema.sql # Auto-run schema
+
+  backend:
+    build:
+      context: ./cpa-api
+      dockerfile: Dockerfile
+    container_name: backend-container
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/cpa
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    ports:
+      - "8080:8080"
+    networks:
+      - cpa-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: frontend-container
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+    networks:
+      - cpa-network
+
+  aws-cli:
+    build:
+      context: ./aws-docker
+      dockerfile: Dockerfile
+    container_name: aws-cli-container
+    networks:
+      - cpa-network
+    entrypoint: ["/bin/sh", "-c", "while true; do sleep 30; done"]
+
+networks:
+  cpa-network:
+    driver: bridge
+
+volumes:
+  mysql_data:

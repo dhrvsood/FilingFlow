@@ -1,4 +1,5 @@
-CREATE SCHEMA `cpa`;
+-- CREATE SCHEMA IF NOT EXISTS cpa;
+USE cpa;
 
 -- CLIENT TABLE
 CREATE TABLE cpa.`client` (

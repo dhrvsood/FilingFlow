@@ -1,20 +1,36 @@
-# Use Maven for building the project
-FROM maven:3.9.9-eclipse-temurin-17 AS build
-WORKDIR /cpa-api
+# Use an official OpenJDK runtime as the base image
+FROM openjdk:17-jdk-slim AS build
 
-# Copy the pom.xml and source code
-COPY pom.xml .
-COPY src ./src
-
-# Build the project using Maven
-RUN mvn clean package -DskipTests
-
-# Use the JDK 17 runtime to run the Spring Boot app
-FROM openjdk:17-jdk-alpine
+# Set the working directory
 WORKDIR /app
 
-# Copy the JAR file from the build stage
-COPY --from=build /cpa-api/target/cpa-api-0.0.1-SNAPSHOT.jar /app/cpa-api.jar
+# Copy the Maven wrapper and pom.xml
+COPY pom.xml mvnw mvnw.cmd ./
+COPY .mvn .mvn
+
+# Grant execute permission for the Maven wrapper
+RUN chmod +x mvnw
+
+# Resolve dependencies to speed up future builds
+RUN ./mvnw dependency:resolve
+
+# Copy the entire project source
+COPY . .
+
+# Build the application
+RUN ./mvnw clean package -DskipTests
+
+# Use a minimal JDK runtime for running the application
+FROM openjdk:17-jdk-slim
+
+# Set the working directory for the runtime container
+WORKDIR /app
+
+# Copy the built JAR file from the build stage
+COPY --from=build /app/target/cpa-api-0.0.1-SNAPSHOT.jar /app/cpa-api.jar
+
+# Expose the application port
+EXPOSE 8080
 
 # Run the application
 ENTRYPOINT ["java", "-jar", "/app/cpa-api.jar"]
