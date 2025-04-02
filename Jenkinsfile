@@ -6,11 +6,10 @@ pipeline {
         AWS_DEFAULT_REGION = "us-east-1"
         AWS_ECR_REPO = "530789571735.dkr.ecr.us-east-1.amazonaws.com"
         APP_NAME = "ds-cpa"
-        AWS_ECS_ID = "ds-cpa-taskdefinition"
-        AWS_ECS_CLUSTER = 
-        AWS_ECS_SERVICE = 
-        AWS_ECS_ID = 
-        AWS_ALBTG
+        AWS_ECS_TD = "ds-cpa-taskdefinition"
+        AWS_ECS_CLUSTER = "ds-cpa-cluster"
+        AWS_ECS_SERVICE = "ds-cpa-svc"
+        AWS_ALBTG = ""
     }
 
     stages {
