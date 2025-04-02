@@ -1,4 +1,8 @@
 -- CREATE SCHEMA IF NOT EXISTS cpa;
+-- USE cpa;
+
+DROP DATABASE IF EXISTS cpa;
+CREATE DATABASE cpa;
 USE cpa;
 
 -- CLIENT TABLE
@@ -27,11 +31,11 @@ CREATE TABLE cpa.`tax_return` (
     filing_status ENUM('single', 'married_joint', 'married_separate', 'business') NOT NULL,
     tax_liability DECIMAL(10, 2) NOT NULL,
     tax_paid DECIMAL(10, 2) NOT NULL,
-    CONSTRAINT fk_client FOREIGN KEY (client_id) REFERENCES Client(client_id) ON DELETE CASCADE,
-    CONSTRAINT fk_spouse_tax FOREIGN KEY (spouse_id) REFERENCES Client(client_id) ON DELETE SET NULL,
-    CONSTRAINT fk_sector FOREIGN KEY (sector_id) REFERENCES Sector(sector_id),
+    CONSTRAINT fk_client FOREIGN KEY (client_id) REFERENCES client(client_id) ON DELETE CASCADE,
+    CONSTRAINT fk_spouse_tax FOREIGN KEY (spouse_id) REFERENCES client(client_id) ON DELETE SET NULL,
+    CONSTRAINT fk_sector FOREIGN KEY (sector_id) REFERENCES sector(sector_id),
     CONSTRAINT unique_tax_return_per_year UNIQUE (client_id, tax_year),  -- Ensure one return per client per year
-    CONSTRAINT unique_joint_filing UNIQUE (client_id, spouse_id, tax_year)  -- Ensure only one joint return per couple
+    CONSTRAINT unique_joint_filing UNIQUE (client_id, spouse_id, tax_year),  -- Ensure only one joint return per couple
     CONSTRAINT unique_person_in_tax_return UNIQUE (tax_year, client_id, spouse_id) -- Prevents either client or spouse from appearing in more than one return for the same year
 );
 

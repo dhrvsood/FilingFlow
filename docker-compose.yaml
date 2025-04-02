@@ -1,5 +1,3 @@
-# version: "3.8"
-
 services:
   mysql:
     image: mysql:8.0
@@ -15,6 +13,12 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql  # Persist data
       - ./db/cpa_schema.sql:/docker-entrypoint-initdb.d/cpa_schema.sql # Auto-run schema
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+      start_period: 20s
+      timeout: 5s
 
   backend:
     build:
@@ -22,7 +26,8 @@ services:
       dockerfile: Dockerfile
     container_name: backend-container
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/cpa
       SPRING_DATASOURCE_USERNAME: root

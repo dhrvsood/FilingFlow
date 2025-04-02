@@ -2,7 +2,7 @@ spring:
   application:
     name: cpa-api
   datasource:
-    url: jdbc:mysql://localhost:3306/cpa
+    url: jdbc:mysql://mysql:3306/cpa
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -13,4 +13,4 @@ spring:
 server:
   port: 8080
 
-base-url: localhost:8080/
+# base-url: localhost:8080/
