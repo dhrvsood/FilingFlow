@@ -1,0 +1,51 @@
+{
+    "family": "ds-cpa-td",
+    "networkMode": "awsvpc",
+    "executionRoleArn": "arn:aws:iam::530789571735:role/ecsTaskExecutionRole",
+    "taskRoleArn": "arn:aws:iam::530789571735:role/ecsTaskExecutionRole",
+    "requiresCompatibilities": ["FARGATE"],
+    "cpu": "256",
+    "memory": "512",
+    "containerDefinitions": [
+        {
+            "name": "ds-cpa-backend",
+            "image": "530789571735.dkr.ecr.us-east-1.amazonaws.com/ds-cpa-backend:#APP_VERSION#",
+            "essential": true,
+            "portMappings": [
+                {
+                    "containerPort": 8080,
+                    "hostPort": 8080,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                }
+            ],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/ds-cpa-td",
+                    "awslogs-region": "us-east-1",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            }
+        },
+        {
+            "name": "ds-cpa-frontend",
+            "image": "530789571735.dkr.ecr.us-east-1.amazonaws.com/ds-cpa-backend:#APP_VERSION#",
+            "essential": true,
+            "portMappings": [
+                {
+                    "containerPort": 3000,
+                    "hostPort": 3000,
+                    "protocol": "tcp"
+                }
+            ],         "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/ds-cpa-td",
+                    "awslogs-region": "us-east-1",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            }
+        }
+    ]
+}
