@@ -46,7 +46,7 @@ pipeline {
                                                 usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
                     sh '''
                     aws sts get-caller-identity
-                    aws ecr describe-repository
+                    aws ecr describe-repositories
                     docker --version
 
                     aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ECR_REPO
