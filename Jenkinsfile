@@ -123,10 +123,10 @@ pipeline {
             }
         }
     }
-    post {
-        always {
-            echo "Archiving Docker Scout Logs..."
-            archiveArtifacts artifacts: 'docker-scout-log/*.log' fingerprint: true
-        }
-    }
+    // post {
+    //     always {
+    //         echo "Archiving Docker Scout Logs..."
+    //         archiveArtifacts artifacts: 'docker-scout-log/*.log' fingerprint: true
+    //     }
+    // }
 }

@@ -3,9 +3,6 @@ pipeline {
     stages {
         stage('Build Docker Images') {
             steps {
-                // script {
-                //     env.DOCKER_IMAGE = "dal-alpine"
-                // }
                 sh '''
                     echo Building Docker Image: aws-cli ...
                     docker build -f aws-docker/Dockerfile -t aws-cli .
