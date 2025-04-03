@@ -13,28 +13,10 @@ pipeline {
     }
 
     stages {
-        // stage('SonarQube Analysis') {
-        //     environment {
-        //         SONAR_SCANNER_HOME = tool 'Sonar' // GLOBAL TOOL CONFIG NAME
-        //     }
-        //     steps {
-        //         withSonarQubeEnv('Sonar') {
-        //             sh '''
-        //                 ${SONAR_SCANNER_HOME}/bin/sonar-scanner \
-        //                 -Dsonar.projecKey=jenkinsscan \
-        //                 -Dsonar.projectName="jenkinsscan" \
-        //                 -Dsonar.projectVersion=1.0 \
-        //                 -Dsonar.sources=.
-
-        //                 echo "Code Scanning Completed. Check SonarQube Analysis..."
-        //             '''
-        //         }
-        //     }
-        // }
         stage('Build Docker Image and Push to ECR') {
             agent {
                 docker {
-                    image 'amazon/aws-cli'
+                    image 'aws-cli'
                     args "-u root -v /var/run/docker.sock:/var/run/docker.sock --entrypoint=''"
                     reuseNode true
                 }
@@ -64,39 +46,6 @@ pipeline {
                 }
             }
         }
-        // stage('Docker Scout Scan') {
-        //     agent {
-        //         docker {
-        //             image 'aws-cli'
-        //             args "-u root -v /var/run/docker.sock:/var/run/docker.sock --entrypoint=''"
-        //             reuseNode true
-        //         }
-        //     }
-        //     steps {
-        //         withCredentials([usernamePassword(credentialsId: 'Docker-Login', passwordVariable: 'DockerHub_Password', usernameVariable: 'DockerHub_Username')]) {
-        //             sh '''
-        //                 mkdir -p docker-scout-logs
-
-        //                 # Install Docker Scout
-        //                 curl -FsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh | sh -s -- -b /usr/local/bin
-
-        //                 docker-scout version > docker-scout-logs/version.log
-
-        //                 echo "Logging into Docker Hub..."
-        //                 docker login -u "$DockerHub_Username" -p $DockerHub_Password"
-
-        //                 echo "Running Docker Scout Quickview..."
-        //                 docker-scout quickview "$AWS_ECR_REPO/$APP_NAME-frontend:$REACT_APP_VERSION" > docker-scout-logs/quickview.log
-
-        //                 echo "Running Docker Scout CVEs..."
-        //                 docker-scout cve "$AWS_ECR_REPO/$APP_NAME-frontend:$REACT_APP_VERSION" > docker-scout-logs/cves.log
-
-        //                 echo "Docker Scout Scan Complete..."
-
-        //             '''
-        //         }
-        //     }
-        // }
         stage('Deploy to AWS') {
             agent {
                 docker {
@@ -123,10 +72,4 @@ pipeline {
             }
         }
     }
-    // post {
-    //     always {
-    //         echo "Archiving Docker Scout Logs..."
-    //         archiveArtifacts artifacts: 'docker-scout-log/*.log' fingerprint: true
-    //     }
-    // }
 }
