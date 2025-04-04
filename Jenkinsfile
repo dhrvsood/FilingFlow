@@ -13,7 +13,7 @@ pipeline {
     }
 
     stages {
-        stage('Build Docker Image and Push to ECR') {
+        stage('Build Frontend Docker Image & Push to ECR') {
             agent {
                 docker {
                     image 'aws-cli'
@@ -38,12 +38,28 @@ pipeline {
                     echo "Building frontend..."
                     docker build -t $AWS_ECR_REPO/$APP_NAME-frontend:$REACT_APP_VERSION -f Dockerfile .
                     docker push $AWS_ECR_REPO/$APP_NAME-frontend:$REACT_APP_VERSION
-
+                    '''
+                }
+            }
+        }
+        stage('Build Backend Docker Image & Push to ECR') {
+            agent {
+                docker {
+                    image 'aws-cli'
+                    args "-u root -v /var/run/docker.sock:/var/run/docker.sock --entrypoint=''"
+                    reuseNode true
+                }
+            }
+            steps {
+                withCredentials([usernamePassword(credentialsId: '1cd9797d-e322-422e-98f5-b0bb61863f1d', 
+                                                passwordVariable: 'AWS_SECRET_ACCESS_KEY', 
+                                                usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
+                    ssh '''
                     echo "Building backend..."
                     docker build -t $AWS_ECR_REPO/$APP_NAME-backend:$REACT_APP_VERSION -f cpa-api/Dockerfile cpa-api
                     docker push $AWS_ECR_REPO/$APP_NAME-backend:$REACT_APP_VERSION
-                    '''
-                }
+                    '''     
+                }         
             }
         }
         stage('Deploy to AWS') {
