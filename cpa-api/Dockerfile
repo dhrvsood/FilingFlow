@@ -1,18 +1,20 @@
-# Use an official OpenJDK runtime as the base image
+# Build stage
 FROM openjdk:17-jdk-slim AS build
 
 WORKDIR /app
 
-# Copy in files that rarely change first for layer caching
 COPY pom.xml mvnw mvnw.cmd ./
 COPY .mvn .mvn
-RUN chmod +x mvnw
-
-# Pre-fetch dependencies
-RUN ./mvnw dependency:resolve
-
-# Copy the rest of the source code
 COPY . .
 
-# Build the application
+# Grant execute permission after copy
+RUN chmod +x mvnw
+
+# Build application
 RUN ./mvnw clean package -DskipTests
+
+# Expose the application port
+EXPOSE 8081
+
+# Run application
+ENTRYPOINT ["java", "-jar", "/app/cpa-api.jar"]
