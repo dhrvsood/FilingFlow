@@ -54,6 +54,14 @@ pipeline {
                                                 passwordVariable: 'AWS_SECRET_ACCESS_KEY', 
                                                 usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
                     sh '''
+                    aws sts get-caller-identity
+                    aws ecr describe-repositories
+                    docker --version
+
+                    aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ECR_REPO
+
+                    echo "$REACT_APP_VERSION=1.0.$BUILD_ID" > .env
+                    
                     echo "Building backend..."
                     docker build -t $AWS_ECR_REPO/$APP_NAME-backend:$REACT_APP_VERSION -f cpa-api/Dockerfile cpa-api
                     docker push $AWS_ECR_REPO/$APP_NAME-backend:$REACT_APP_VERSION
