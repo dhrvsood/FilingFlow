@@ -92,7 +92,7 @@ pipeline {
 
                     # Register new task definition
                     LATEST_TD=$(
-                        aws ecs register-task-definition --cli-input-ison file://aws/task-definition.json | jq '.taskDefinition.revision'
+                        aws ecs register-task-definition --cli-input-json file://aws/task-definition.json | jq '.taskDefinition.revision'
                     )
                     
                     # update ecs cluster 
