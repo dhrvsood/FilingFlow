@@ -22,7 +22,7 @@
             "logConfiguration": {
                 "logDriver": "awslogs",
                 "options": {
-                    "awslogs-group": "/ecs/ds-cpa-td",
+                    "awslogs-group": "/ecs/ds-cpa-cluster/ds-cpa-svc",
                     "awslogs-region": "us-east-1",
                     "awslogs-stream-prefix": "ecs"
                 }
@@ -41,7 +41,7 @@
             ],         "logConfiguration": {
                 "logDriver": "awslogs",
                 "options": {
-                    "awslogs-group": "/ecs/ds-cpa-td",
+                    "awslogs-group": "/ecs/ds-cpa-cluster/ds-cpa-svc",
                     "awslogs-region": "us-east-1",
                     "awslogs-stream-prefix": "ecs"
                 }
