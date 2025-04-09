@@ -30,7 +30,7 @@
         },
         {
             "name": "ds-cpa-frontend",
-            "image": "530789571735.dkr.ecr.us-east-1.amazonaws.com/ds-cpa-backend:#APP_VERSION#",
+            "image": "530789571735.dkr.ecr.us-east-1.amazonaws.com/ds-cpa-frontend:#APP_VERSION#",
             "essential": true,
             "portMappings": [
                 {
