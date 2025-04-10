@@ -13,6 +13,13 @@ RUN chmod +x mvnw
 # Build application
 RUN ./mvnw clean package -DskipTests
 
+# Run stage
+FROM openjdk:17-jdk-slim
+
+WORKDIR /app
+
+COPY --from=build /app/target/*.jar app.jar
+
 # Expose the application port
 EXPOSE 8081
 
