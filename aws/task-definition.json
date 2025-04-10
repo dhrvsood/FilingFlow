@@ -38,7 +38,8 @@
                     "hostPort": 3000,
                     "protocol": "tcp"
                 }
-            ],         "logConfiguration": {
+            ],
+            "logConfiguration": {
                 "logDriver": "awslogs",
                 "options": {
                     "awslogs-group": "/ecs/ds-cpa-cluster/ds-cpa-svc",
