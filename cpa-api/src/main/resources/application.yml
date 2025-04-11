@@ -2,15 +2,17 @@ spring:
   application:
     name: cpa-api
   datasource:
-    url: jdbc:mysql://mysql:3306/cpa
-    username: root
-    password: root
+    url: jdbc:mysql://${DB_HOST}:3306/cpa
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: none
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/cpa_schema.sql
 
 server:
   port: 8081
-
-# base-url: localhost:8080/

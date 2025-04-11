@@ -20,8 +20,15 @@ WORKDIR /app
 
 COPY --from=build /app/target/*.jar app.jar
 
+# Copy .env into container
+COPY .env .env
+
+# Export env vars from .env
+RUN set -a && source .env && set +a
+
 # Expose the application port
 EXPOSE 8081
 
-# Run application
-CMD ["java", "-jar", "app.jar"]
+# Source .env and run application
+# CMD ["java", "-jar", "app.jar"]
+CMD ["sh", "-c", "set -a && source .env && java -jar app.jar"]
