@@ -80,13 +80,28 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: '1cd9797d-e322-422e-98f5-b0bb61863f1d', 
                                 passwordVariable: 'AWS_SECRET_ACCESS_KEY', 
-                                usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
+                                usernameVariable: 'AWS_ACCESS_KEY_ID'), 
+                                usernamePassword(credentialsId: 'Aurora-RDS-Creds',
+                                passwordVariable: 'DB_PASSWORD',
+                                usernameVariables: 'DB_USERNAME'),
+                                string(credentialsId: 'Aurora-RDS-Host', variable: 'DB_HOST')]) {
                     sh '''
                     aws --version
 
                     # swap values for task definition
                     sed -i "s/#APP_VERSION#/$REACT_APP_VERSION/g" aws/task-definition.json
                     echo "Sending Task Definition to ECS..."
+                    
+                    # inject Aurora-RDS credentials and host for backend use
+                    jq '.containerDefinitions[] |=
+                    if .name == "ds-cpa-backend" then
+                        . + {
+                        environment: [
+                            { name: "DB_HOST", value: "'$DB_HOST'" },
+                            { name: "DB_USERNAME", value: "'$DB_USERNAME'" },
+                            { name: "DB_PASSWORD", value: "'$DB_PASSWORD'" }
+                        ]
+                        }
 
                     cat aws/task-definition.json
 
