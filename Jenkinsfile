@@ -72,45 +72,54 @@ pipeline {
         stage('Deploy to AWS') {
             agent {
                 docker {
-                    image 'aws-cli'
-                    args '--entrypoint=""'
+                    image 'amazon/aws-cli'
                     reuseNode true
                 }
             }
             steps {
-                withCredentials([usernamePassword(credentialsId: '1cd9797d-e322-422e-98f5-b0bb61863f1d', 
-                                passwordVariable: 'AWS_SECRET_ACCESS_KEY', 
-                                usernameVariable: 'AWS_ACCESS_KEY_ID'), 
-                                usernamePassword(credentialsId: 'Aurora-RDS-Creds',
-                                passwordVariable: 'DB_PASSWORD',
-                                usernameVariables: 'DB_USERNAME'),
-                                string(credentialsId: 'Aurora-RDS-Host', variable: 'DB_HOST')]) {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: '1cd9797d-e322-422e-98f5-b0bb61863f1d',
+                        passwordVariable: 'AWS_SECRET_ACCESS_KEY',
+                        usernameVariable: 'AWS_ACCESS_KEY_ID'
+                    ),
+                    usernamePassword(
+                        credentialsId: 'Aurora-RDS-Creds',
+                        passwordVariable: 'DB_PASSWORD',
+                        usernameVariable: 'DB_USERNAME'
+                    ),
+                    string(
+                        credentialsId: 'Aurora-RDS-Host',
+                        variable: 'DB_HOST'
+                    )
+                ]) {
                     sh '''
                     aws --version
 
-                    # swap values for task definition
+                    echo "Injecting APP_VERSION..."
                     sed -i "s/#APP_VERSION#/$REACT_APP_VERSION/g" aws/task-definition.json
-                    echo "Sending Task Definition to ECS..."
-                    
-                    # inject Aurora-RDS credentials and host for backend use
+
+                    echo "Injecting Aurora RDS environment variables into task definition..."
                     jq '.containerDefinitions[] |=
-                    if .name == "ds-cpa-backend" then
-                        . + {
-                        environment: [
-                            { name: "DB_HOST", value: "'$DB_HOST'" },
-                            { name: "DB_USERNAME", value: "'$DB_USERNAME'" },
-                            { name: "DB_PASSWORD", value: "'$DB_PASSWORD'" }
-                        ]
-                        }
+                        if .name == "ds-cpa-backend" then
+                            . + {
+                                environment: [
+                                    { "name": "DB_HOST", "value": "'$DB_HOST'" },
+                                    { "name": "DB_USERNAME", "value": "'$DB_USERNAME'" },
+                                    { "name": "DB_PASSWORD", "value": "'$DB_PASSWORD'" }
+                                ]
+                            }
+                        else
+                            .
+                        end' aws/task-definition.json > aws/updated-task-definition.json
 
-                    cat aws/task-definition.json
+                    echo "Updated Task Definition:"
+                    cat aws/updated-task-definition.json
 
-                    # Register new task definition
-                    LATEST_TD=$(
-                        aws ecs register-task-definition --cli-input-json file://aws/task-definition.json | jq '.taskDefinition.revision'
-                    )
-                    
-                    # update ecs cluster 
+                    echo "Registering Task Definition..."
+                    LATEST_TD=$(aws ecs register-task-definition --cli-input-json file://aws/updated-task-definition.json | jq '.taskDefinition.revision')
+
+                    echo "Updating ECS Service..."
                     aws ecs update-service --cluster $AWS_ECS_CLUSTER --service $AWS_ECS_SERVICE --task-definition $AWS_ECS_TD:$LATEST_TD
                     '''
                 }
