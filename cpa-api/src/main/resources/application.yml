@@ -2,7 +2,7 @@ spring:
   application:
     name: cpa-api
   datasource:
-    url: jdbc:mysql://ds-cpa-db.cluster-cx4dqztdn4yr.us-east-1.rds.amazonaws.com:3306/cpa
+    url: jdbc:mysql://ds-cpa-db-instance-1.cx4dqztdn4yr.us-east-1.rds.amazonaws.com3306/cpa
     username: admin
     password: Pa$$w0rd123
     driver-class-name: com.mysql.cj.jdbc.Driver
