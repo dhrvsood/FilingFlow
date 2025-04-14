@@ -1,5 +1,8 @@
+CREATE SCHEMA IF NOT EXISTS cpa;
+USE cpa;
+
 -- CLIENT TABLE
-CREATE TABLE client (
+CREATE TABLE cpa.client (
     client_id INT PRIMARY KEY AUTO_INCREMENT,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
@@ -9,13 +12,13 @@ CREATE TABLE client (
 );
 
 -- SECTOR TABLE
-CREATE TABLE sector (
+CREATE TABLE cpa.sector (
     sector_id INT PRIMARY KEY AUTO_INCREMENT,
     sector_name VARCHAR(100) UNIQUE NOT NULL
 );
 
 -- TAX RETURN TABLE
-CREATE TABLE tax_return (
+CREATE TABLE cpa.tax_return (
     tax_return_id INT PRIMARY KEY AUTO_INCREMENT,
     client_id INT NOT NULL,
     spouse_id INT DEFAULT NULL,
@@ -33,7 +36,7 @@ CREATE TABLE tax_return (
 );
 
 -- CAPACITY TABLE
-CREATE TABLE capacity (
+CREATE TABLE cpa.capacity (
     capacity_id INT PRIMARY KEY AUTO_INCREMENT,
     year INT NOT NULL,
     max_num_returns INT NOT NULL,
