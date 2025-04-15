@@ -19,7 +19,8 @@ export const Sectors = () => {
 		// Fetch sectors and tax returns data from an API
 		const fetchSectors = async () => {
 			try {
-				await axios.get("/sector").then(response => setSectors(response.data));
+				const response = await axios.get('/sector');
+                setSectors(response.data);
 			} catch (error) {
 				console.error("Error fetching sector data", error);
 			}
