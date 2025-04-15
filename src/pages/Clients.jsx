@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Row, Col, Button, Modal, Form, Spinner, Alert } from 'react-bootstrap';
-import axios from 'axios';
+import axios from './axios';
 
 
 export const Clients = () => {  
@@ -17,7 +17,7 @@ export const Clients = () => {
     useEffect(() => {
         const fetchClients = async () => {
             try {
-                const response = await axios.get('/api/client');
+                const response = await axios.get('/client');
                 console.log("Fetched clients:", response.data);
                 setClients(response.data);
             } catch (error) {
@@ -39,7 +39,7 @@ export const Clients = () => {
     // Confirm deletion
     const confirmDelete = async () => {
         try {
-        await axios.delete(`/api/client/${selectedClient.id}`);
+        await axios.delete(`/client/${selectedClient.id}`);
         setClients(clients.filter((client) => client.id !== selectedClient.id));
         } catch (error) {
         console.error('Error deleting client:', error);
@@ -64,7 +64,7 @@ export const Clients = () => {
     // Confirm update
     const confirmUpdate = async () => {
         try {
-        await axios.put(`/api/client/${selectedClient.id}`, updatedClient);
+        await axios.put(`/client/${selectedClient.id}`, updatedClient);
         setClients(clients.map((client) => (client.id === selectedClient.id ? updatedClient : client)));
         } catch (error) {
         console.error('Error updating client:', error);
@@ -88,7 +88,7 @@ export const Clients = () => {
     // Confirm add new client
     const confirmAdd = async () => {
         try {
-        const response = await axios.post('/api/client', newClient);
+        const response = await axios.post('/client', newClient);
         setClients([...clients, response.data]);
         } catch (error) {
         console.error('Error adding new client:', error);
@@ -98,7 +98,7 @@ export const Clients = () => {
     };
 
     if (loading) {
-        return <Spinner animation="border" />;
+        return <Spinner animation="border" />;s
     }    
 
     return (

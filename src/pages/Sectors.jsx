@@ -19,7 +19,7 @@ export const Sectors = () => {
 		// Fetch sectors and tax returns data from an API
 		const fetchSectors = async () => {
 			try {
-				await axios.get("/api/sector").then(response => setSectors(response.data));
+				await axios.get("/sector").then(response => setSectors(response.data));
 			} catch (error) {
 				console.error("Error fetching sector data", error);
 			}
@@ -35,7 +35,7 @@ export const Sectors = () => {
 
 	const confirmDelete = async () => {
 		try {
-			await axios.delete(`/api/sector/${selectedSector.id}`);
+			await axios.delete(`/sector/${selectedSector.id}`);
 			setSectors(sectors.filter(sector => sector.id !== selectedSector.id));
 			setShowDeleteModal(false);
 		} catch (error) {
@@ -59,7 +59,7 @@ export const Sectors = () => {
 	// Confirm update
 	const confirmUpdate = async () => {
 		try {
-			await axios.put(`/api/sector/${selectedSector.id}`, updatedSector);
+			await axios.put(`/sector/${selectedSector.id}`, updatedSector);
 			setSectors(sectors.map((sector) => (sector.id === selectedSector.id ? updatedSector : sector)));
 		} catch (error) {
 			console.error('Error updating sector:', error);
@@ -83,7 +83,7 @@ export const Sectors = () => {
 	// Confirm add new sector
 	const confirmAdd = async () => {
 		try {
-			const response = await axios.post('/api/sector', newSector);
+			const response = await axios.post('/sector', newSector);
 			setSectors([...sectors, response.data]);
 		} catch (error) {
 			console.error('Error adding new sector:', error);
