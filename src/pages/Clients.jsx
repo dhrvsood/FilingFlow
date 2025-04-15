@@ -18,6 +18,7 @@ export const Clients = () => {
         const fetchClients = async () => {
             try {
                 const response = await axios.get('/client');
+                console.log("Fetched clients:", response.data);
                 setClients(response.data);
             } catch (error) {
                 console.error('Error fetching clients:', error);
