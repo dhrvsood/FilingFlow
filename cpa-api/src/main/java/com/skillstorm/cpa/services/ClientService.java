@@ -1,5 +1,7 @@
 package com.skillstorm.cpa.services;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,10 +88,11 @@ public class ClientService {
 	}
 	
 	// create one 
-	public ResponseEntity<Client> createOne(ClientDTO dto) { 
+	public ResponseEntity<Client> createOne(ClientDTO dto) {
+		List<TaxReturn> trs = new LinkedList<>();
 		try {
 			return ResponseEntity.status(HttpStatus.CREATED)
-								 .body(repo.save(new Client(0, dto.firstName(), dto.lastName(), dto.email(), dto.address(), [])));
+								 .body(repo.save(new Client(0, dto.firstName(), dto.lastName(), dto.email(), dto.address(), trs)));
 		} catch (Exception e) {
 			return ResponseEntity.status(500).body(null);
 		}
