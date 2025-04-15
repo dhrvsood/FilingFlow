@@ -98,7 +98,7 @@ export const Clients = () => {
     };
 
     if (loading) {
-        return <Spinner animation="border" />;s
+        return <Spinner animation="border" />;
     }    
 
     return (
