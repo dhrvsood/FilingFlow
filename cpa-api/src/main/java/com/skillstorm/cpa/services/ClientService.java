@@ -89,7 +89,7 @@ public class ClientService {
 	public ResponseEntity<Client> createOne(ClientDTO dto) { 
 		try {
 			return ResponseEntity.status(HttpStatus.CREATED)
-								 .body(repo.save(new Client(0, dto.firstName(), dto.lastName(), dto.email(), dto.address(), dto.taxReturns())));
+								 .body(repo.save(new Client(0, dto.firstName(), dto.lastName(), dto.email(), dto.address(), [])));
 		} catch (Exception e) {
 			return ResponseEntity.status(500).body(null);
 		}
