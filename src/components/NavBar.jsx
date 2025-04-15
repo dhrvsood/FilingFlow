@@ -4,6 +4,9 @@ import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 
 export const NavBar = () => {
+    const version = process.env.REACT_APP_VERSION;
+    console.log(version);
+
     const links = [
         { linkName: "Settings", linkDestination: "/settings" },
         { linkName: "Sectors", linkDestination: "/sectors" },
@@ -22,6 +25,9 @@ export const NavBar = () => {
                         </Nav.Link>
                     )) }
                 </Nav>
+                <div className="ms-auto text-end">
+                    <span className="navbar-text">v{version}</span>
+                </div>
             </Container>
         </Navbar>
     );
