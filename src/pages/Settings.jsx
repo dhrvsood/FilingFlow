@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from './axios';
+import axios from '../axios';
 import Card from 'react-bootstrap/Card';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import { Button, Modal, Form, Alert } from 'react-bootstrap';

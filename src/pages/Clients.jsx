@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Row, Col, Button, Modal, Form, Spinner, Alert } from 'react-bootstrap';
-import axios from './axios';
+import axios from '../axios';
 
 
 export const Clients = () => {  
