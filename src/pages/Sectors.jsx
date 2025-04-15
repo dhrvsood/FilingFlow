@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Accordion, Badge, Button, Table, Modal, Form } from "react-bootstrap";
-import axios from "axios";
+import axios from "../axios";
 
 export const Sectors = () => {
 
