@@ -70,12 +70,12 @@ export const EditTaxReturnModal = ({ show, handleClose, selectedTaxReturn, getAl
   const fetchClientsForYear = async (year, clientId) => {
     try {
       // Fetch all clients apart from the current year
-      const response = await fetch(`/client/year/${year}`);
-      const data = await response.json();
+      const response = await axios.get(`/client/year/${year}`);
+      const data = response.data;
 
       // Add clientId to the list of clients
-      const clientResponse = await fetch(`/client/${clientId}`);
-      const clientData = await clientResponse.json();
+      const clientResponse = await axios.get(`/client/${clientId}`);
+      const clientData = clientResponse.data;
 
       const updatedClients = [...data, clientData];
       console.log(updatedClients);

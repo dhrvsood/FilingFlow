@@ -47,9 +47,8 @@ export const AddTaxReturnModal = ({ show, handleClose, onTaxReturnAdded }) => {
   // Fetch clients without returns for the selected year
   const fetchClientsForYear = async (year) => {
     try {
-      const response = await fetch(`/client/year/${year}`);
-      const data = await response.json();
-      setClients(data); // Set clients to state
+      const response = await axios.get(`/client/year/${year}`);
+      setClients(response.data); // Set clients to state
     } catch (error) {
       console.error("Error fetching clients:", error);
     }
