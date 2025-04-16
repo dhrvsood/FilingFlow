@@ -71,7 +71,7 @@ export const Settings = () => {
             .catch(error => {
                 console.error('Failed to update capacity:', error);
                 setShowError(true); // Show error alert
-                setErrorMessage(error.response.data.message); // Set error message
+                setErrorMessage(error.response.data); // Set error message
             });
     };
 
@@ -85,7 +85,8 @@ export const Settings = () => {
             .catch(error => {
                 console.error('Failed to create new capacity:', error);
                 setShowError(true); // Show error alert
-                setErrorMessage(error.response.data.message); // Set error message
+                // console.log(error.response.data);
+                setErrorMessage(error.response.data); // Set error message
             });
     };
 

@@ -12,29 +12,17 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 	
 	@ExceptionHandler(ExceededCapacityException.class)
-	public ResponseEntity<Map<String, Object>> handleExceededCapacityException(ExceededCapacityException ex) {
-		Map<String, Object> body = new LinkedHashMap<>();
-		body.put("status", HttpStatus.BAD_REQUEST);
-		body.put("error", "Exceeded Capacity");
-		body.put("message", ex.getMessage());
-		return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST); // 400 Bad Request
+	public ResponseEntity<String> handleExceededCapacityException(ExceededCapacityException ex) {
+		return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 	
 	@ExceptionHandler(InvalidYearException.class)
-	public ResponseEntity<Map<String, Object>> handleInvalidYearException(InvalidYearException ex) {
-		Map<String, Object> body = new LinkedHashMap<>();
-		body.put("status", HttpStatus.BAD_REQUEST);
-		body.put("error", "Invalid Year");
-		body.put("message", ex.getMessage());
-		return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST); // 400 Bad Request
+	public ResponseEntity<String> handleInvalidYearException(InvalidYearException ex) {
+		return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 	
 	@ExceptionHandler(InvalidTaxReturnException.class)
-	public ResponseEntity<Map<String, Object>> handleInvalidTaxReturnException(InvalidTaxReturnException ex) {
-		Map<String, Object> body = new LinkedHashMap<>();
-		body.put("status", HttpStatus.BAD_REQUEST);
-		body.put("error", "Invalid Tax Return");
-		body.put("message", ex.getMessage());
-		return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST); // 400 Bad Request
+	public ResponseEntity<String> handleInvalidTaxReturnException(InvalidTaxReturnException ex) {
+		return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 }
