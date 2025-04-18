@@ -1,0 +1,17 @@
+pipeline {
+    agent any
+    stages {
+        stage('Build Docker Images') {
+            steps {
+                sh '''
+                    echo Building Docker Image: aws-cli ...
+                    docker build -f aws-docker/Dockerfile -t aws-cli .
+                    # ^ allows the docker aws image to solely be 'aws-cli' in lieu of 'amazon/aws-cli'
+
+                    # future DB Docker build
+                    echo "Building Docker Image: $DOCKER_IMAGE"
+                '''
+            }
+        }
+    }
+}

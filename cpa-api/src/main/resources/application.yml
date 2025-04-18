@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: cpa-api
+  datasource:
+    url: jdbc:mysql://ds-cpa-db.cluster-cx4dqztdn4yr.us-east-1.rds.amazonaws.com:3306/cpa
+    username: root
+    password: Thisismytempaurorapassword
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/schema.sql
+      # data-locations: classpath:db/data.sql
+  logging:
+    level:
+      org.hibernate.SQL: DEBUG
+      org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+server:
+  port: 8081
