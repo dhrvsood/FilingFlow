@@ -2,9 +2,9 @@ spring:
   application:
     name: cpa-api
   datasource:
-    url: jdbc:mysql://ds-cpa-db.cluster-cx4dqztdn4yr.us-east-1.rds.amazonaws.com:3306/cpa
-    username: root
-    password: Thisismytempaurorapassword
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
